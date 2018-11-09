@@ -78,6 +78,7 @@ import org.apache.commons.httpclient.contrib.proxy.PluginProxyUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
+import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -92,10 +93,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 import org.jets3t.gui.AuthenticationDialog;
 import org.jets3t.gui.ErrorDialog;
@@ -1589,26 +1589,24 @@ public class Uploader extends JApplet implements S3ServiceEventListener, ActionL
     }
 
     private HttpClient initHttpConnection() {
-        // Set client parameters.
-        HttpParams params = RestUtils.createDefaultHttpParams();
-        HttpProtocolParams.setUserAgent(
-                params,
-                ServiceUtils.getUserAgentDescription(APPLICATION_DESCRIPTION));
-
         // Set connection parameters.
-        HttpConnectionParams.setConnectionTimeout(
-                params,
-                HTTP_CONNECTION_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(params, SOCKET_CONNECTION_TIMEOUT);
-        HttpConnectionParams.setStaleCheckingEnabled(params, false);
+        if (!this.uploaderProperties.containsKey("httpclient.socket-timeout-ms")) {
+            this.uploaderProperties.setProperty(
+                "httpclient.socket-timeout-ms", "" + SOCKET_CONNECTION_TIMEOUT);
+        }
+        if (!this.uploaderProperties.containsKey("httpclient.stale-checking-enabled")) {
+            this.uploaderProperties.setProperty(
+                "httpclient.stale-checking-enabled", "" + false);
+        }
 
-        DefaultHttpClient httpClient = new DefaultHttpClient(params);
-        // Replace default error retry handler.
-        httpClient.setHttpRequestRetryHandler(new RestUtils.JetS3tRetryHandler(
-                MAX_CONNECTION_RETRIES,
-                null));
+        HttpClientBuilder httpClientBuilder = RestUtils.initHttpClientBuilder(
+            null,  // requestAuthorizer
+            this.uploaderProperties,
+            ServiceUtils.getUserAgentDescription(APPLICATION_DESCRIPTION),
+            null  // credentialsProvider
+            );
 
-        return httpClient;
+        return httpClientBuilder.build();
     }
 
     /**
