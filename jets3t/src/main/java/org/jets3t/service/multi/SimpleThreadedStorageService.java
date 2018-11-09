@@ -95,7 +95,7 @@ public class SimpleThreadedStorageService {
      * @throws ServiceException
      */
     public StorageBucket[] createBuckets(final String[] bucketNames) throws ServiceException {
-        final List<StorageBucket> bucketList = new ArrayList<StorageBucket>();
+        final List<StorageBucket> bucketList = new ArrayList<>();
         StorageServiceEventAdaptor adaptor = new StorageServiceEventAdaptor() {
             @Override
             public void event(CreateBucketsEvent event) {
@@ -124,7 +124,7 @@ public class SimpleThreadedStorageService {
     public StorageObject[] putObjects(String bucketName,
         final StorageObject[] objects) throws ServiceException
     {
-        final List<StorageObject> objectList = new ArrayList<StorageObject>();
+        final List<StorageObject> objectList = new ArrayList<>();
         StorageServiceEventAdaptor adaptor = new StorageServiceEventAdaptor() {
             @Override
             public void event(CreateObjectsEvent event) {
@@ -161,6 +161,7 @@ public class SimpleThreadedStorageService {
      * metadata copying option.s
      */
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Map[] copyObjects(final String sourceBucketName, final String destinationBucketName,
         final String[] sourceObjectKeys, final StorageObject[] destinationObjects, boolean replaceMetadata)
         throws ServiceException
@@ -191,7 +192,7 @@ public class SimpleThreadedStorageService {
      * @throws ServiceException
      */
     public void deleteObjects(String bucketName, final StorageObject[] objects) throws ServiceException {
-        final List objectList = new ArrayList();
+        final List<StorageObject> objectList = new ArrayList<>();
         StorageServiceEventAdaptor adaptor = new StorageServiceEventAdaptor() {
             @Override
             public void event(DeleteObjectsEvent event) {

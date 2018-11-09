@@ -21,10 +21,10 @@ package org.jets3t.service;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1322,7 +1322,7 @@ public abstract class StorageService {
      * a map of metadata property name/value pairs renamed to be suitable for use as HTTP headers.
      */
     public Map<String, Object> renameMetadataKeys(Map<String, Object> metadata) {
-        Map<String, Object> convertedMetadata = new HashMap<String, Object>();
+        Map<String, Object> convertedMetadata = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         // Add all meta-data headers.
         if (metadata != null) {
             for (Map.Entry<String, Object> entry: metadata.entrySet()) {

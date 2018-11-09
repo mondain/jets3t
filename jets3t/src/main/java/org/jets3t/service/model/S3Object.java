@@ -37,6 +37,7 @@ import org.jets3t.service.utils.ServiceUtils;
  */
 public class S3Object extends StorageObject implements Cloneable {
     public static final String STORAGE_CLASS_STANDARD = "STANDARD";
+    public static final String STORAGE_CLASS_INFREQUENT_ACCESS = "STANDARD_IA";
     public static final String STORAGE_CLASS_REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY";
     public static final String STORAGE_CLASS_GLACIER = "GLACIER";
 

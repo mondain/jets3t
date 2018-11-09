@@ -36,6 +36,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Amazon Web Services (AWS) credentials of an Identity and Access Management
  * (IAM) role provided via EC2 instance data.
  *
+ * Use the {@link #loadFromEC2InstanceData(boolean)} static method, or one of
+ * its variants, to construct a new instance of this class with credentials
+ * automatically found and loaded from the EC2 metadata service.
+ *
  * @author James Murty
  */
 public class AWSEC2IAMSessionCredentials extends AWSSessionCredentials {

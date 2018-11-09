@@ -31,7 +31,7 @@ import org.jets3t.service.utils.ServiceUtils;
 import com.jamesmurty.utils.XMLBuilder;
 
 /**
- * Represents the lifecycle configuraton of a bucket.
+ * Represents the lifecycle configuration of a bucket.
  *
  * @author James Murty
  */

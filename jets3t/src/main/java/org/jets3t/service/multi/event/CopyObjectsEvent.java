@@ -41,15 +41,18 @@ import org.jets3t.service.multi.ThreadedStorageService;
  * @author James Murty
  */
 public final class CopyObjectsEvent extends ServiceEvent {
+
     private Map[] results = null;
+
     private StorageObject[] copyCancelledObjects = null;
+
     private StorageObject[] destinationObjects = null;
+
     private String[] sourceObjectKeys = null;
 
     private CopyObjectsEvent(int eventCode, Object uniqueOperationId) {
         super(eventCode, uniqueOperationId);
     }
-
 
     public static CopyObjectsEvent newErrorEvent(Throwable t, Object uniqueOperationId) {
         CopyObjectsEvent event = new CopyObjectsEvent(EVENT_ERROR, uniqueOperationId);
@@ -63,18 +66,14 @@ public final class CopyObjectsEvent extends ServiceEvent {
         return event;
     }
 
-    public static CopyObjectsEvent newInProgressEvent(ThreadWatcher threadWatcher,
-        Map[] completedResults, Object uniqueOperationId)
-    {
+    public static CopyObjectsEvent newInProgressEvent(ThreadWatcher threadWatcher, Map[] completedResults, Object uniqueOperationId) {
         CopyObjectsEvent event = new CopyObjectsEvent(EVENT_IN_PROGRESS, uniqueOperationId);
         event.setThreadWatcher(threadWatcher);
         event.setResults(completedResults);
         return event;
     }
 
-    public static CopyObjectsEvent newCompletedEvent(Object uniqueOperationId, String[] sourceObjectKeys,
-        StorageObject[] destinationObjects)
-    {
+    public static CopyObjectsEvent newCompletedEvent(Object uniqueOperationId, String[] sourceObjectKeys, StorageObject[] destinationObjects) {
         CopyObjectsEvent event = new CopyObjectsEvent(EVENT_COMPLETED, uniqueOperationId);
         event.setDestinationObjects(destinationObjects);
         event.setSourceObjectKeys(sourceObjectKeys);
@@ -87,9 +86,7 @@ public final class CopyObjectsEvent extends ServiceEvent {
         return event;
     }
 
-    public static CopyObjectsEvent newIgnoredErrorsEvent(ThreadWatcher threadWatcher,
-        Throwable[] ignoredErrors, Object uniqueOperationId)
-    {
+    public static CopyObjectsEvent newIgnoredErrorsEvent(ThreadWatcher threadWatcher, Throwable[] ignoredErrors, Object uniqueOperationId) {
         CopyObjectsEvent event = new CopyObjectsEvent(EVENT_IGNORED_ERRORS, uniqueOperationId);
         event.setThreadWatcher(threadWatcher);
         event.setIgnoredErrors(ignoredErrors);
@@ -120,8 +117,7 @@ public final class CopyObjectsEvent extends ServiceEvent {
      */
     public Map[] getCopyResults() throws IllegalStateException {
         if (getEventCode() != EVENT_IN_PROGRESS) {
-            throw new IllegalStateException(
-                "Copy results are only available from EVENT_IN_PROGRESS events");
+            throw new IllegalStateException("Copy results are only available from EVENT_IN_PROGRESS events");
         }
         return results;
     }

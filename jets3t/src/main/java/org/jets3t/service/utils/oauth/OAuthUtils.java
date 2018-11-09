@@ -47,7 +47,7 @@ import org.jets3t.service.utils.oauth.OAuthConstants.GSOAuth2_10;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Utilties for obtaining OAuth authentication tokens.
+ * Utilities for obtaining OAuth authentication tokens.
  *
  * Implementation is currently specific to the Google Storage OAuth 2.0 implementation,
  * though hopefully generic enough it may be extensible in the future.
@@ -72,10 +72,13 @@ public class OAuthUtils {
     }
 
     protected HttpClient httpClient = null;
+
     protected ObjectMapper jsonMapper = new ObjectMapper();
 
     protected OAuthImplementation implementation = null;
+
     protected String clientId = null;
+
     protected String clientSecret = null;
 
     /**
@@ -88,13 +91,10 @@ public class OAuthUtils {
      * @param clientSecret     Client secret for installed applications
      * @param jets3tProperties Properties to configure HTTP/S connections
      */
-    public OAuthUtils(OAuthImplementation implementation, String clientId, String clientSecret,
-                      Jets3tProperties jets3tProperties) {
-        this(RestUtils.initHttpConnection(
-                null, // requestAuthorizer
-                jets3tProperties,
-                HTTP_USER_AGENT,
-                null), implementation, clientId, clientSecret);
+    public OAuthUtils(OAuthImplementation implementation, String clientId, String clientSecret, Jets3tProperties jets3tProperties) {
+        this(RestUtils.initHttpClientBuilder(null, // requestAuthorizer
+                jets3tProperties, HTTP_USER_AGENT, null // credentialsProvider
+                ).build(), implementation, clientId, clientSecret);
     }
 
     /**
@@ -113,12 +113,8 @@ public class OAuthUtils {
         this.clientSecret = clientSecret;
         this.httpClient = httpClient;
 
-        if(this.implementation == null
-                || this.clientId == null
-                || this.clientSecret == null
-                || this.httpClient == null) {
-            throw new IllegalArgumentException(
-                    "Null arguments not permitted when constructing " + this.getClass().getName());
+        if (this.implementation == null || this.clientId == null || this.clientSecret == null || this.httpClient == null) {
+            throw new IllegalArgumentException("Null arguments not permitted when constructing " + this.getClass().getName());
         }
     }
 
@@ -132,8 +128,7 @@ public class OAuthUtils {
      * @param clientSecret   Client secret for installed applications
      */
     public OAuthUtils(OAuthImplementation implementation, String clientId, String clientSecret) {
-        this(implementation, clientId, clientSecret,
-                Jets3tProperties.getInstance(Constants.JETS3T_PROPERTIES_FILENAME));
+        this(implementation, clientId, clientSecret, Jets3tProperties.getInstance(Constants.JETS3T_PROPERTIES_FILENAME));
     }
 
     public String getClientId() {
@@ -156,17 +151,11 @@ public class OAuthUtils {
      * @see <a href="http://code.google.com/apis/accounts/docs/OAuth2.html#IA">OAuth 2.0 for native applications</a>
      */
     public String generateBrowserUrlToAuthorizeNativeApplication(OAuthScope scope) {
-        if(this.implementation == OAuthImplementation.GOOGLE_STORAGE_OAUTH2_10) {
-            String url = GSOAuth2_10.Endpoints.Authorization
-                    + "?response_type=" + GSOAuth2_10.ResponseTypes.Code
-                    + "&redirect_uri=" + GSOAuth2_10.NATIVE_APPLICATION_REDIRECT_URI
-                    + "&client_id=" + this.clientId
-                    + "&scope=" + scope;
-            log.debug("Generated authorization URL for OAuth implementation "
-                    + this.implementation + ": " + url);
+        if (this.implementation == OAuthImplementation.GOOGLE_STORAGE_OAUTH2_10) {
+            String url = GSOAuth2_10.Endpoints.Authorization + "?response_type=" + GSOAuth2_10.ResponseTypes.Code + "&redirect_uri=" + GSOAuth2_10.NATIVE_APPLICATION_REDIRECT_URI + "&client_id=" + this.clientId + "&scope=" + scope;
+            log.debug("Generated authorization URL for OAuth implementation " + this.implementation + ": " + url);
             return url;
-        }
-        else {
+        } else {
             throw new IllegalStateException("Unsupported implementation: " + this.implementation);
         }
     }
@@ -181,28 +170,25 @@ public class OAuthUtils {
      * @throws IOException Error receiving tokens
      */
     @SuppressWarnings("serial")
-    public OAuth2Tokens retrieveOAuth2TokensFromAuthorization(
-            final String authorizationCode) throws IOException {
-        log.debug("Retrieving OAuth2 tokens using implementation " + implementation
-                + " with authorization code: " + authorizationCode);
+    public OAuth2Tokens retrieveOAuth2TokensFromAuthorization(final String authorizationCode) throws IOException {
+        log.debug("Retrieving OAuth2 tokens using implementation " + implementation + " with authorization code: " + authorizationCode);
         Map<String, Object> responseData;
 
-        if(this.implementation == OAuthImplementation.GOOGLE_STORAGE_OAUTH2_10) {
-            responseData = this.performPostRequestAndParseJSONResponse(
-                    GSOAuth2_10.Endpoints.Token,
-                    new ArrayList<NameValuePair>() {{
-                        add(new BasicNameValuePair("client_id", clientId));
-                        add(new BasicNameValuePair("client_secret", clientSecret));
-                        add(new BasicNameValuePair("code", authorizationCode));
-                        add(new BasicNameValuePair("grant_type", GSOAuth2_10.GrantTypes.Authorization));
-                        add(new BasicNameValuePair("redirect_uri", GSOAuth2_10.NATIVE_APPLICATION_REDIRECT_URI));
-                    }});
-            log.debug("Retrieved authorization data from OAuth2 token endpoint "
-                    + GSOAuth2_10.Endpoints.Token + ": " + responseData);
+        if (this.implementation == OAuthImplementation.GOOGLE_STORAGE_OAUTH2_10) {
+            responseData = this.performPostRequestAndParseJSONResponse(GSOAuth2_10.Endpoints.Token, new ArrayList<NameValuePair>() {
+                {
+                    add(new BasicNameValuePair("client_id", clientId));
+                    add(new BasicNameValuePair("client_secret", clientSecret));
+                    add(new BasicNameValuePair("code", authorizationCode));
+                    add(new BasicNameValuePair("grant_type", GSOAuth2_10.GrantTypes.Authorization));
+                    add(new BasicNameValuePair("redirect_uri", GSOAuth2_10.NATIVE_APPLICATION_REDIRECT_URI));
+                }
+            });
+            log.debug("Retrieved authorization data from OAuth2 token endpoint " + GSOAuth2_10.Endpoints.Token + ": " + responseData);
 
             // Pass on error message in response data
             String error = (String) responseData.get("error");
-            if(error != null) {
+            if (error != null) {
                 throw new IOException("OAuth2 authentication-to-tokens error: " + error);
             }
 
@@ -213,20 +199,15 @@ public class OAuthUtils {
             String tokenType = (String) responseData.get("token_type");
 
             // Sanity-check response data
-            if(!"Bearer".equals(tokenType)) {
-                throw new IOException("OAuth2 authentication-to-tokens error, invalid token type in data: "
-                        + responseData);
+            if (!"Bearer".equals(tokenType)) {
+                throw new IOException("OAuth2 authentication-to-tokens error, invalid token type in data: " + responseData);
             }
-            if(accessToken == null || refreshToken == null) {
-                throw new IOException("OAuth2 authentication-to-tokens error, missing token(s) in data: "
-                        + responseData);
+            if (accessToken == null || refreshToken == null) {
+                throw new IOException("OAuth2 authentication-to-tokens error, missing token(s) in data: " + responseData);
             }
 
-            return new OAuth2Tokens(
-                    accessToken, refreshToken,
-                    OAuth2Tokens.calculateExpiry(expiresIn));
-        }
-        else {
+            return new OAuth2Tokens(accessToken, refreshToken, OAuth2Tokens.calculateExpiry(expiresIn));
+        } else {
             throw new IllegalStateException("Unsupported implementation: " + this.implementation);
         }
     }
@@ -242,25 +223,23 @@ public class OAuthUtils {
      */
     @SuppressWarnings("serial")
     public OAuth2Tokens refreshOAuth2AccessToken(final OAuth2Tokens tokens) throws IOException {
-        log.debug("Refreshing OAuth2 access token using implementation " + implementation
-                + " with refresh token: " + tokens.getRefreshToken());
+        log.debug("Refreshing OAuth2 access token using implementation " + implementation + " with refresh token: " + tokens.getRefreshToken());
         Map<String, Object> responseData = null;
 
-        if(this.implementation == OAuthImplementation.GOOGLE_STORAGE_OAUTH2_10) {
-            responseData = this.performPostRequestAndParseJSONResponse(
-                    GSOAuth2_10.Endpoints.Token,
-                    new ArrayList<NameValuePair>() {{
-                        add(new BasicNameValuePair("client_id", clientId));
-                        add(new BasicNameValuePair("client_secret", clientSecret));
-                        add(new BasicNameValuePair("refresh_token", tokens.getRefreshToken()));
-                        add(new BasicNameValuePair("grant_type", GSOAuth2_10.GrantTypes.RefreshToken));
-                    }});
-            log.debug("Retrieved access token refresh data from OAuth2 token endpoint "
-                    + GSOAuth2_10.Endpoints.Token + ": " + responseData);
+        if (this.implementation == OAuthImplementation.GOOGLE_STORAGE_OAUTH2_10) {
+            responseData = this.performPostRequestAndParseJSONResponse(GSOAuth2_10.Endpoints.Token, new ArrayList<NameValuePair>() {
+                {
+                    add(new BasicNameValuePair("client_id", clientId));
+                    add(new BasicNameValuePair("client_secret", clientSecret));
+                    add(new BasicNameValuePair("refresh_token", tokens.getRefreshToken()));
+                    add(new BasicNameValuePair("grant_type", GSOAuth2_10.GrantTypes.RefreshToken));
+                }
+            });
+            log.debug("Retrieved access token refresh data from OAuth2 token endpoint " + GSOAuth2_10.Endpoints.Token + ": " + responseData);
 
             // Pass on error message in response data
             String error = (String) responseData.get("error");
-            if(error != null) {
+            if (error != null) {
                 throw new IOException("OAuth2 error refreshing access token: " + error);
             }
 
@@ -270,20 +249,15 @@ public class OAuthUtils {
             String tokenType = (String) responseData.get("token_type");
 
             // Sanity-check response data
-            if(!"Bearer".equals(tokenType)) {
-                throw new IOException("OAuth2 error refreshing access token, invalid token type in data: "
-                        + responseData);
+            if (!"Bearer".equals(tokenType)) {
+                throw new IOException("OAuth2 error refreshing access token, invalid token type in data: " + responseData);
             }
-            if(accessToken == null) {
-                throw new IOException("OAuth2 error refreshing access token, missing token in data: "
-                        + responseData);
+            if (accessToken == null) {
+                throw new IOException("OAuth2 error refreshing access token, missing token in data: " + responseData);
             }
 
-            return new OAuth2Tokens(
-                    accessToken, tokens.getRefreshToken(),
-                    OAuth2Tokens.calculateExpiry(expiresIn));
-        }
-        else {
+            return new OAuth2Tokens(accessToken, tokens.getRefreshToken(), OAuth2Tokens.calculateExpiry(expiresIn));
+        } else {
             throw new IllegalStateException("Unsupported implementation: " + this.implementation);
         }
     }
@@ -298,26 +272,22 @@ public class OAuthUtils {
      * @throws ClientProtocolException No HTTP 200 response
      * @throws IOException
      */
-    protected Map<String, Object> performPostRequestAndParseJSONResponse(
-            String endpointUri, List<NameValuePair> postParams)
-            throws IOException {
-        log.debug("Performing POST request to " + endpointUri
-                + " and expecting JSON response. POST parameters: " + postParams);
+    @SuppressWarnings("unchecked")
+    protected Map<String, Object> performPostRequestAndParseJSONResponse(String endpointUri, List<NameValuePair> postParams) throws IOException {
+        log.debug("Performing POST request to " + endpointUri + " and expecting JSON response. POST parameters: " + postParams);
 
         HttpPost post = new HttpPost(endpointUri);
         post.setEntity(new UrlEncodedFormEntity(postParams, "UTF-8"));
 
         String responseDataString = httpClient.execute(post, new ResponseHandler<String>() {
-            public String handleResponse(HttpResponse response)
-                    throws IOException {
+            public String handleResponse(HttpResponse response) throws IOException {
                 StatusLine statusLine = response.getStatusLine();
                 int statusCode = statusLine.getStatusCode();
-                if(statusCode == HttpStatus.SC_OK) {
+                if (statusCode == HttpStatus.SC_OK) {
                     HttpEntity entity = response.getEntity();
-                    if(entity != null) {
+                    if (entity != null) {
                         return EntityUtils.toString(entity);
-                    }
-                    else {
+                    } else {
                         return null;
                     }
                 }

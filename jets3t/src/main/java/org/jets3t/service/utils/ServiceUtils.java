@@ -71,6 +71,10 @@ public class ServiceUtils {
     protected static final SimpleDateFormat iso8601DateParser = new SimpleDateFormat(
         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
+    // Parse ISO8601 format dates without the milliseconds component
+    protected static final SimpleDateFormat iso8601DateParser_withoutMS = new SimpleDateFormat(
+        "yyyy-MM-dd'T'HH:mm:ss'Z'");
+
     // The Eucalyptus Walrus storage service returns short, non-UTC date time values.
     protected static final SimpleDateFormat iso8601DateParser_Walrus = new SimpleDateFormat(
         "yyyy-MM-dd'T'HH:mm:ss");
@@ -80,9 +84,20 @@ public class ServiceUtils {
 
     static {
         iso8601DateParser.setTimeZone(new SimpleTimeZone(0, "GMT"));
+        iso8601DateParser_withoutMS.setTimeZone(new SimpleTimeZone(0, "GMT"));
         rfc822DateParser.setTimeZone(new SimpleTimeZone(0, "GMT"));
     }
 
+    /**
+     * Parse an ISO 8601 formatted date string.
+     * @param dateString
+     * date string in one of the supported formats: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+     * or  "yyyy-MM-dd'T'HH:mm:ss'Z'" (no milliseconds) or
+     * "yyyy-MM-dd'T'HH:mm:ss" (non-UTC date time for Eucalyptus Walrus).
+     * @return
+     * Date parsed from string
+     * @throws ParseException
+     */
     public static Date parseIso8601Date(String dateString) throws ParseException {
         ParseException exception = null;
         synchronized (iso8601DateParser) {
@@ -90,6 +105,14 @@ public class ServiceUtils {
                 return iso8601DateParser.parse(dateString);
             } catch (ParseException e) {
                 exception = e;
+            }
+        }
+        // Fall-back to parse ISO 8601 dates without millisecond component
+        synchronized (iso8601DateParser_withoutMS) {
+            try {
+                return iso8601DateParser_withoutMS.parse(dateString);
+            } catch (ParseException e) {
+                // Ignore alternative ISO 8601 date parsing exceptions
             }
         }
         // Work-around to parse datetime value returned by Walrus
@@ -466,7 +489,7 @@ public class ServiceUtils {
                 }
 
                 // Parse date strings into Date objects, if necessary.
-                if ("Date".equals(key) || "Last-Modified".equals(key)) {
+                if ("Date".equalsIgnoreCase(key) || "Last-Modified".equalsIgnoreCase(key) ) {
                     if (!(value instanceof Date)) {
                         if (log.isDebugEnabled()) {
                             log.debug("Parsing date string '" + value

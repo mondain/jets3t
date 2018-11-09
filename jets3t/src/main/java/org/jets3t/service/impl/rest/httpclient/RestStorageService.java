@@ -2,7 +2,7 @@
  * JetS3t : Java S3 Toolkit
  * Project hosted at http://bitbucket.org/jmurty/jets3t/
  *
- * Copyright 2010-2014 James Murty
+ * Copyright 2010-2018 James Murty
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -49,12 +50,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.RequestWrapper;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.EntityUtils;
@@ -67,6 +68,7 @@ import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.impl.rest.HttpException;
 import org.jets3t.service.impl.rest.XmlResponsesSaxParser.CopyObjectResultHandler;
 import org.jets3t.service.impl.rest.XmlResponsesSaxParser.ListBucketHandler;
+import org.jets3t.service.model.BaseStorageItem;
 import org.jets3t.service.model.CreateBucketConfiguration;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.StorageBucket;
@@ -97,9 +99,9 @@ import com.jamesmurty.utils.XMLBuilder;
 public abstract class RestStorageService extends StorageService implements JetS3tRequestAuthorizer {
     private static final Log log = LogFactory.getLog(RestStorageService.class);
 
-    protected static enum HTTP_METHOD {PUT, POST, HEAD, GET, DELETE}
+    protected enum HTTP_METHOD {PUT, POST, HEAD, GET, DELETE}
 
-    protected HttpClient httpClient;
+    protected CloseableHttpClient httpClient;
     protected CredentialsProvider credentialsProvider;
 
     protected RegionEndpointCache regionEndpointCache = null;
@@ -163,14 +165,15 @@ public abstract class RestStorageService extends StorageService implements JetS3
     @Override
     protected void initializeDefaults() {
         super.initializeDefaults();
-        this.httpClient = initHttpConnection();
-        initializeProxy();
+        final HttpClientBuilder httpClientBuilder = this.initHttpClientBuilder();
+        this.initializeProxy(httpClientBuilder);
+        this.httpClient = httpClientBuilder.build();
     }
 
-    protected void initializeProxy() {
+    protected void initializeProxy(HttpClientBuilder httpClientBuilder) {
         // Retrieve Proxy settings.
-        if(getJetS3tProperties().getBoolProperty("httpclient.proxy-autodetect", true)) {
-            RestUtils.initHttpProxy(httpClient, getJetS3tProperties(), this.getEndpoint());
+        if (getJetS3tProperties().getBoolProperty("httpclient.proxy-autodetect", true)) {
+            RestUtils.initHttpProxy(httpClientBuilder, getJetS3tProperties(), this.getEndpoint());
         }
         else {
             String proxyHostAddress = getJetS3tProperties().getStringProperty("httpclient.proxy-host", null);
@@ -178,7 +181,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
             String proxyUser = getJetS3tProperties().getStringProperty("httpclient.proxy-user", null);
             String proxyPassword = getJetS3tProperties().getStringProperty("httpclient.proxy-password", null);
             String proxyDomain = getJetS3tProperties().getStringProperty("httpclient.proxy-domain", null);
-            RestUtils.initHttpProxy(httpClient, getJetS3tProperties(), false,
+            RestUtils.initHttpProxy(httpClientBuilder, getJetS3tProperties(), false,
                     proxyHostAddress, proxyPort, proxyUser, proxyPassword, proxyDomain, this.getEndpoint());
         }
     }
@@ -191,33 +194,29 @@ public abstract class RestStorageService extends StorageService implements JetS3
     @Override
     protected void shutdownImpl() throws ServiceException {
         shuttingDown = true;
-        ClientConnectionManager manager = this.getHttpConnectionManager();
-        manager.shutdown();
+        // Will shutdown connection manager
+        try {
+            httpClient.close();
+        }
+        catch(IOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     /**
      * Initialise HttpClient and HttpConnectionManager objects with the configuration settings
      * appropriate for communicating with S3. By default, this method simply delegates the
-     * configuration task to {@link org.jets3t.service.utils.RestUtils#initHttpConnection(JetS3tRequestAuthorizer, org.jets3t.service.Jets3tProperties, String, org.apache.http.client.CredentialsProvider)}.
+     * configuration task to {@link org.jets3t.service.utils.RestUtils#initHttpClientBuilder(JetS3tRequestAuthorizer, Jets3tProperties, String, CredentialsProvider)}.
      * <p>
      * To alter the low-level behaviour of the HttpClient library, override this method in
      * a subclass and apply your own settings before returning the objects.
      *
      * @return configured HttpClient library client and connection manager objects.
      */
-    protected HttpClient initHttpConnection() {
-        return RestUtils.initHttpConnection(
-                this,
-                getJetS3tProperties(),
-                getInvokingApplicationDescription(),
-                getCredentialsProvider());
-    }
-
-    /**
-     * @return the manager of HTTP connections for this service.
-     */
-    public ClientConnectionManager getHttpConnectionManager() {
-        return this.httpClient.getConnectionManager();
+    protected HttpClientBuilder initHttpClientBuilder() {
+        return RestUtils.initHttpClientBuilder(
+            this, getJetS3tProperties(),
+            getInvokingApplicationDescription(), getCredentialsProvider());
     }
 
     /**
@@ -234,7 +233,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
      * @param httpClient the client that will replace the default client created by
      *                   the class constructor.
      */
-    public void setHttpClient(HttpClient httpClient) {
+    public void setHttpClient(CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
@@ -249,7 +248,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
     /**
      * Sets the credentials provider this service will use to authenticate itself.
      * Changing the credentials provider with this method will have no effect until
-     * the {@link #initHttpConnection()} method is called.
+     * the {@link #initHttpClientBuilder()} method is called.
      *
      * @param credentialsProvider Credentials
      */
@@ -257,10 +256,18 @@ public abstract class RestStorageService extends StorageService implements JetS3
         this.credentialsProvider = credentialsProvider;
     }
 
+    /**
+     * @return
+     * cache of region endpoints as used for authenticating to AWS S3.
+     */
     public RegionEndpointCache getRegionEndpointCache() {
         return this.regionEndpointCache;
     }
 
+    /**
+     * Set cache for region endpoints as used for authenticating to AWS S3.
+     * @param rec
+     */
     public void setRegionEndpointCache(RegionEndpointCache rec) {
         this.regionEndpointCache = rec;
     }
@@ -283,8 +290,9 @@ public abstract class RestStorageService extends StorageService implements JetS3
      * Performs an HTTP/S request by invoking the provided HttpMethod object. If the HTTP
      * response code doesn't match the expected value, an exception is thrown.
      *
-     * @param httpMethod            the object containing a request target and all other information necessary to perform the
-     *                              request
+     * @param httpUriRequest
+     * the object containing a request target and all other information
+     * necessary to perform the request
      * @param expectedResponseCodes the HTTP response code(s) that indicates a successful request. If the response code received
      *                              does not match this value an error must have occurred, so an exception is thrown.
      * @param context               An HttpContext to facilitate information sharing in the HTTP chain
@@ -293,18 +301,18 @@ public abstract class RestStorageService extends StorageService implements JetS3
      *                          error response document.
      */
     protected HttpResponse performRequest(
-            HttpUriRequest httpMethod,
+            HttpUriRequest httpUriRequest,
             int[] expectedResponseCodes,
             HttpContext context) throws ServiceException
     {
         HttpResponse response = null;
         try {
             if(log.isDebugEnabled()) {
-                log.debug("Performing " + httpMethod.getMethod()
-                        + " request for '" + httpMethod.getURI().toString()
+                log.debug("Performing " + httpUriRequest.getMethod()
+                        + " request for '" + httpUriRequest.getURI().toString()
                         + "', expecting response codes: " +
                         "[" + ServiceUtils.join(expectedResponseCodes, ",") + "]");
-                log.debug("Headers: " + Arrays.asList(httpMethod.getAllHeaders()));
+                log.debug("Headers: " + Arrays.asList(httpUriRequest.getAllHeaders()));
             }
 
             // Track count of different response "error" types
@@ -323,18 +331,18 @@ public abstract class RestStorageService extends StorageService implements JetS3
             // This eternal loop is broken by an explicit `break` command or by throwing an exception
             while(true) {
                 // Build the authorization string for the method
-                authorizeHttpRequest(httpMethod, context, forceRequestSignatureVersion);
+                authorizeHttpRequest(httpUriRequest, context, forceRequestSignatureVersion);
 
-                response = httpClient.execute(httpMethod, context);
+                response = httpClient.execute(httpUriRequest, context);
                 int responseCode = response.getStatusLine().getStatusCode();
 
                 String contentType = "";
-                if(response.getFirstHeader("Content-Type") != null) {
-                    contentType = response.getFirstHeader("Content-Type").getValue();
+                if(response.getFirstHeader(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE) != null) {
+                    contentType = response.getFirstHeader(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE).getValue();
                 }
 
                 if(log.isDebugEnabled()) {
-                    log.debug("Response for '" + httpMethod.getMethod()
+                    log.debug("Response for '" + httpUriRequest.getMethod()
                             + "'. Content-Type: " + contentType
                             + ", Headers: " + Arrays.asList(response.getAllHeaders()));
                     log.debug("Response entity: " + response.getEntity());
@@ -386,7 +394,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
                 {
                     // Prepare exception for XML-bearing error response
                     if(log.isDebugEnabled()) {
-                        log.debug("Response '" + httpMethod.getURI().getRawPath()
+                        log.debug("Response '" + httpUriRequest.getURI().getRawPath()
                                 + "' - Received error response with XML message");
                     }
 
@@ -409,7 +417,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
                     exception = new ServiceException("Service Error Message.", sb.toString());
                 } else {
                     if(log.isDebugEnabled()) {
-                        log.debug("Response '" + httpMethod.getURI().getRawPath()
+                        log.debug("Response '" + httpUriRequest.getURI().getRawPath()
                                 + "' - Received error response without XML content");
                     }
                     String responseText = null;
@@ -454,19 +462,22 @@ public abstract class RestStorageService extends StorageService implements JetS3
                     Header locationHeader = response.getFirstHeader("location");
                     URI newLocation = new URI(locationHeader.getValue());
                     // deal with implementations of HttpUriRequest
-                    if(httpMethod instanceof HttpRequestBase) {
-                        ((HttpRequestBase) httpMethod).setURI(newLocation);
+                    if (httpUriRequest instanceof HttpRequestBase) {
+                        ((HttpRequestBase) httpUriRequest).setURI(newLocation);
                     }
-                    else if(httpMethod instanceof RequestWrapper) {
-                        ((RequestWrapper) httpMethod).setURI(newLocation);
+                    // TODO How/why will a request get wrapped? Still needed for HttpClient 4.5+?
+                    /*
+                    else if (httpUriRequest instanceof RequestWrapper) {
+                        ((RequestWrapper) httpUriRequest).setURI(newLocation);
                     }
-                    httpMethod.setHeader("Host", newLocation.getHost());
+                    */
+                    httpUriRequest.setHeader("Host", newLocation.getHost());
 
                     redirectCount++;
                     if(log.isDebugEnabled()) {
                         log.debug(
                             "Following Temporary Redirect (" + redirectCount + ") to: "
-                            + httpMethod.getURI().toString());
+                            + httpUriRequest.getURI().toString());
                     }
                 }
                 else if("RequestTimeout".equals(exception.getErrorCode())) {
@@ -497,17 +508,17 @@ public abstract class RestStorageService extends StorageService implements JetS3
                 // Special handling for S3 object PUT failures causing NoSuchKey errors - Issue #85, #175
                 // Treat this as a special kind of internal server error.
                 else if(responseCode == 404
-                        && "PUT".equalsIgnoreCase(httpMethod.getMethod())
+                        && "PUT".equalsIgnoreCase(httpUriRequest.getMethod())
                         && "NoSuchKey".equals(exception.getErrorCode())
                         // If PUT operation is trying to copy an existing source object, don't ignore 404
-                        && httpMethod.getFirstHeader(getRestHeaderPrefix() + "copy-source") == null) {
+                        && httpUriRequest.getFirstHeader(getRestHeaderPrefix() + "copy-source") == null) {
                     // Throws provided exception if we have exceeded the retry count
                     sleepOnInternalError(++internalErrorCount, exception);
                     if(log.isDebugEnabled()) {
-                        log.debug("Ignoring NoSuchKey/404 error on PUT to: " + httpMethod.getURI().toString());
+                        log.debug("Ignoring NoSuchKey/404 error on PUT to: " + httpUriRequest.getURI().toString());
                     }
                 }
-                else if((responseCode == 403 || responseCode == 401) && this.isRecoverable403(httpMethod, exception)) {
+                else if((responseCode == 403 || responseCode == 401) && this.isRecoverable403(httpUriRequest, exception)) {
                     // Retry up to our limit; but at least once
                     if (authFailureCount >= retryMaxCount
                         && authFailureCount > 0)  // Ensure we have retried at least once...
@@ -534,7 +545,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
                     if (log.isWarnEnabled()) {
                         log.warn(
                             "Retrying request with \"AWS4-HMAC-SHA256\" signing"
-                            + " mechanism: " + httpMethod);
+                            + " mechanism: " + httpUriRequest);
                     }
                 }
                 // Special handling for requests signed using AWS request signature version
@@ -552,23 +563,23 @@ public abstract class RestStorageService extends StorageService implements JetS3
                     }
 
                     // Cache correct region for this request's bucket name
-                    URI originalURI = httpMethod.getURI();
+                    URI originalURI = httpUriRequest.getURI();
                     String bucketName = ServiceUtils.findBucketNameInHostOrPath(
                         originalURI, this.getEndpoint());
                     this.regionEndpointCache.putRegionForBucketName(
                         bucketName, expectedRegion);
 
-                    ((HttpRequestBase) httpMethod).setURI(
+                    ((HttpRequestBase) httpUriRequest).setURI(
                         SignatureUtils.awsV4CorrectHostnameForRegion(
-                            httpMethod.getURI(), expectedRegion));
+                            httpUriRequest.getURI(), expectedRegion));
                     authFailureCount++;
 
                     if(log.isWarnEnabled()) {
                         log.warn("Retrying request after automatic adjustment of"
                             + " Host endpoint from " + "\"" + originalURI.getHost()
-                            + "\" to \"" + httpMethod.getURI().getHost()
+                            + "\" to \"" + httpUriRequest.getURI().getHost()
                             + "\" following request signing error"
-                            + " using AWS request signing version 4: " + httpMethod);
+                            + " using AWS request signing version 4: " + httpUriRequest);
                     }
                 }
                 // If we haven't explicitly detected an retry-able error response type above,
@@ -581,15 +592,15 @@ public abstract class RestStorageService extends StorageService implements JetS3
                 // point in the code if an exception isn't thrown above)
                 if(log.isWarnEnabled()) {
                     String requestDescription =
-                        httpMethod.getMethod()
-                            + " '" + httpMethod.getURI().getPath()
-                            + (httpMethod.getURI().getQuery() != null
-                            && httpMethod.getURI().getQuery().length() > 0
-                            ? "?" + httpMethod.getURI().getQuery() : "")
+                        httpUriRequest.getMethod()
+                            + " '" + httpUriRequest.getURI().getPath()
+                            + (httpUriRequest.getURI().getQuery() != null
+                            && httpUriRequest.getURI().getQuery().length() > 0
+                            ? "?" + httpUriRequest.getURI().getQuery() : "")
                             + "'"
                             + " -- ResponseCode: " + responseCode
                             + ", ResponseStatus: " + response.getStatusLine().getReasonPhrase()
-                            + ", Request Headers: [" + ServiceUtils.join(httpMethod.getAllHeaders(), ", ") + "]"
+                            + ", Request Headers: [" + ServiceUtils.join(httpUriRequest.getAllHeaders(), ", ") + "]"
                             + ", Response Headers: [" + ServiceUtils.join(response.getAllHeaders(), ", ") + "]";
                     requestDescription = requestDescription.replaceAll("[\\n\\r\\f]", "");  // Remove any newlines.
                     log.warn("Retrying request following error response: " + requestDescription);
@@ -614,7 +625,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
             if(log.isDebugEnabled() && !shuttingDown) {
                 log.debug("Releasing HttpClient connection after error: " + t.getMessage());
             }
-            httpMethod.abort();
+            httpUriRequest.abort();
 
             ServiceException serviceException;
             if(t instanceof ServiceException) {
@@ -642,9 +653,9 @@ public abstract class RestStorageService extends StorageService implements JetS3
                 serviceException.setResponseCode(response.getStatusLine().getStatusCode());
                 serviceException.setResponseStatus(response.getStatusLine().getReasonPhrase());
             }
-            if(httpMethod.getFirstHeader("Host") != null) {
+            if(httpUriRequest.getFirstHeader("Host") != null) {
                 serviceException.setRequestHost(
-                        httpMethod.getFirstHeader("Host").getValue());
+                        httpUriRequest.getFirstHeader("Host").getValue());
             }
             if(response != null && response.getFirstHeader("Date") != null) {
                 serviceException.setResponseDate(
@@ -935,6 +946,9 @@ public abstract class RestStorageService extends StorageService implements JetS3
 
             String value = objValue.toString();
 
+            // Trim whitespace in HTTP header value to comply with spec, see #230
+            value = value.trim();
+
             // Ensure user-supplied metadata values are compatible with the REST interface.
             // Key must be ASCII text, non-ASCII characters are not allowed in HTTP header names.
             boolean validAscii = false;
@@ -1149,7 +1163,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
              * if an explicit Content-Type is not already set. See issue #109
              */
             if(requestEntity.getContentType() != null
-                    && httpMethod.getFirstHeader("Content-Type") == null) {
+                    && httpMethod.getFirstHeader(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE) == null) {
                 httpMethod.setHeader(requestEntity.getContentType());
             }
         }
@@ -1255,8 +1269,8 @@ public abstract class RestStorageService extends StorageService implements JetS3
             if(metadata == null) {
                 metadata = new HashMap<String, Object>();
             }
-            if(!metadata.containsKey("content-type")) {
-                metadata.put("Content-Type", "text/plain");
+            if(!metadata.containsKey(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE)) {
+                metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, "text/plain");
             }
             String xml = builder.asString(null);
             return performRestPut(bucketName, objectKey, metadata, requestParameters,
@@ -1274,8 +1288,8 @@ public abstract class RestStorageService extends StorageService implements JetS3
             if(metadata == null) {
                 metadata = new HashMap<String, Object>();
             }
-            if(!metadata.containsKey("content-type")) {
-                metadata.put("Content-Type", "text/plain");
+            if(!metadata.containsKey(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE)) {
+                metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, "text/plain");
             }
             String xml = builder.asString(null);
             return performRestPost(bucketName, objectKey, metadata, requestParameters,
@@ -1480,7 +1494,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
 
         String bucketName = ""; // Root path of S3 service lists the user's buckets.
         HttpResponse httpResponse = performRestGet(bucketName, null, null, headers);
-        String contentType = httpResponse.getFirstHeader("Content-Type").getValue();
+        String contentType = httpResponse.getFirstHeader(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE).getValue();
 
         if(!isXmlContentType(contentType)) {
             throw new ServiceException("Expected XML document response from S3 but received content type " +
@@ -1501,7 +1515,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
 
         String bucketName = ""; // Root path of S3 service lists the user's buckets.
         HttpResponse httpResponse = performRestGet(bucketName, null, null, null);
-        String contentType = httpResponse.getFirstHeader("Content-Type").getValue();
+        String contentType = httpResponse.getFirstHeader(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE).getValue();
 
         if(!isXmlContentType(contentType)) {
             throw new ServiceException("Expected XML document response from S3 but received content type " +
@@ -1714,7 +1728,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
         }
 
         Map<String, Object> metadata = new HashMap<String, Object>();
-        metadata.put("Content-Type", "text/plain");
+        metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, "text/plain");
 
         String aclAsXml = acl.toXml();
         metadata.put("Content-Length", String.valueOf(aclAsXml.length()));
@@ -1736,7 +1750,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
         HttpEntity requestEntity = null;
 
         if(location != null && !"US".equalsIgnoreCase(location)) {
-            metadata.put("Content-Type", "text/xml");
+            metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, "text/xml");
             try {
                 CreateBucketConfiguration config = new CreateBucketConfiguration(location);
                 String configXml = config.toXml();
@@ -1818,7 +1832,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
         requestParameters.put("logging", "");
 
         Map<String, Object> metadata = new HashMap<String, Object>();
-        metadata.put("Content-Type", "text/plain");
+        metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, "text/plain");
 
         String statusAsXml;
         try {
@@ -1936,10 +1950,10 @@ public abstract class RestStorageService extends StorageService implements JetS3
             metadata = new HashMap<String, Object>(metadata);
         }
         if(contentType != null) {
-            metadata.put("Content-Type", contentType);
+            metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, contentType);
         }
         else {
-            metadata.put("Content-Type", Mimetypes.MIMETYPE_OCTET_STREAM);
+            metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, Mimetypes.MIMETYPE_OCTET_STREAM);
         }
 
         // Apply per-object or default options when uploading object
@@ -1958,7 +1972,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
             log.debug("Creating object bucketName=" + bucketName +
                     ", objectKey=" + objectKey +
                     ", storageClass=" + storageClass + "." +
-                    " Content-Type=" + metadata.get("Content-Type") +
+                    " Content-Type=" + metadata.get(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE) +
                     " Including data? " + (requestEntity != null) +
                     " Metadata: " + metadata +
                     " ACL: " + acl
@@ -2071,7 +2085,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
                     + " to " + destinationBucketName + ":" + destinationObjectKey);
         }
 
-        Map<String, Object> metadata = new HashMap<String, Object>();
+        Map<String, Object> metadata = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
 
         String sourceKey = RestUtils.encodeUrlPath("/" + sourceBucketName + "/" + sourceObjectKey, "/");
 
@@ -2089,8 +2103,8 @@ public abstract class RestStorageService extends StorageService implements JetS3
             // Include any metadata provided with S3 object.
             metadata.putAll(destinationMetadata);
             // Set default content type.
-            if(!metadata.containsKey("Content-Type")) {
-                metadata.put("Content-Type", Mimetypes.MIMETYPE_OCTET_STREAM);
+            if(!metadata.containsKey(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE)) {
+                metadata.put(BaseStorageItem.METADATA_HEADER_CONTENT_TYPE, Mimetypes.MIMETYPE_OCTET_STREAM);
             }
         }
         else {

@@ -38,15 +38,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.commons.httpclient.contrib.proxy.PluginProxyUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
@@ -99,29 +97,25 @@ public class GatekeeperClientUtils {
      * @return
      */
     private HttpClient initHttpConnection() {
-        // Set client parameters.
-        HttpParams params = RestUtils.createDefaultHttpParams();
-        HttpProtocolParams.setUserAgent(
-              params,
-              ServiceUtils.getUserAgentDescription(userAgentDescription));
-
         // Set connection parameters.
-        HttpConnectionParams.setConnectionTimeout(
-              params,
-              connectionTimeout);
-        HttpConnectionParams.setSoTimeout(params, connectionTimeout);
-        HttpConnectionParams.setStaleCheckingEnabled(params, false);
+        Jets3tProperties jets3tProperties = Jets3tProperties.getInstance(
+            "gatekeeper.properties");
+        if (!jets3tProperties.containsKey("httpclient.socket-timeout-ms")) {
+            jets3tProperties.setProperty(
+                "httpclient.socket-timeout-ms", "" + connectionTimeout);
+        }
+        if (!jets3tProperties.containsKey("httpclient.stale-checking-enabled")) {
+            jets3tProperties.setProperty(
+                "httpclient.stale-checking-enabled", "" + false);
+        }
 
-        DefaultHttpClient httpClient = new DefaultHttpClient(params);
-        // Replace default error retry handler.
-        httpClient.setHttpRequestRetryHandler(new RestUtils.JetS3tRetryHandler(
-              maxRetryCount,
-              null));
-
-        // httpClient.getParams().setAuthenticationPreemptive(true);
-        httpClient.setCredentialsProvider(credentialsProvider);
-
-        return httpClient;
+        final HttpClientBuilder httpClientBuilder = RestUtils.initHttpClientBuilder(
+                null,  // requestAuthorizer
+                jets3tProperties,
+                ServiceUtils.getUserAgentDescription(userAgentDescription),
+                credentialsProvider
+        );
+        return httpClientBuilder.build();
     }
 
     /**

@@ -23,6 +23,7 @@ public class CustomOrigin extends Origin {
 
     public enum OriginProtocolPolicy {
         HTTP_ONLY ("http-only"),
+        HTTPS_ONLY ("https-only"),
         MATCH_VIEWER ("match-viewer");
 
         private final String textValue;
