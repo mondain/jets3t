@@ -2,6 +2,17 @@ JetS3t Release Notes
 ====================
 
 -------------
+Version 0.9.5
+-------------
+
+ * Moving to github under a new maintainer: Paul Gregoire
+ * Mavenization and separation into modules
+ * Refactoring of logging to use SLF4J
+ * Updating Jackson from Codehaus to FasterXML
+
+To-be-continued...
+
+-------------
 Version 0.9.4
 -------------
 
