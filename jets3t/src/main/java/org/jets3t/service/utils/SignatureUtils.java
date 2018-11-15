@@ -593,6 +593,14 @@ public class SignatureUtils {
      * becomes "s3-eu-central-1.amazonaws.com".
      */
     public static URI awsV4CorrectHostnameForRegion(URI uri, String region) {
+    	
+    	if ("cn-north-1".equals(region)) {
+            return uri;
+        }
+        if ("cn-northwest-1".equals(region)) {
+            return uri;
+        }
+        
         String[] hostSplit = uri.getHost().split("\\.");
         if (region.equals("us-east-1")) {
             hostSplit[hostSplit.length - 3] = "s3";
