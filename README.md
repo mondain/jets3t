@@ -136,6 +136,11 @@ Maven
   </dependency>
 ```
 
+Direct downloads
+-------
+[Snapshots](https://oss.sonatype.org/content/repositories/snapshots/org/jets3t/)
+[Releases](https://oss.sonatype.org/content/repositories/releases/org/jets3t/)
+
 
 Servlets
 --------
