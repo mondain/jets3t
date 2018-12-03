@@ -581,6 +581,12 @@ public class TestAWSRequestSignatureVersion4 extends TestCase {
             "test-" + testCredentials.getAccessKey().toLowerCase()
             + "-testwithservicecreatebucket-"
             + System.currentTimeMillis();
+        
+        // fix for invalid bucket name
+        bucketName = "test-" + "rajdeep"
+        		+ "-testwithservicecreatebucket-"
+                + System.currentTimeMillis();
+        
         service.createBucket(bucketName);
         service.deleteBucket(bucketName);
     }

@@ -19,7 +19,10 @@
 package org.jets3t.service.impl.rest.httpclient;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -1850,6 +1853,10 @@ public abstract class RestStorageService extends StorageService implements JetS3
             throw new ServiceException(se);
         }
     }
+    
+    
+    public static byte[] toByteArrayUsingJava(InputStream is) throws IOException{ ByteArrayOutputStream baos = new ByteArrayOutputStream(); int reads = is.read(); while(reads != -1){ baos.write(reads); reads = is.read(); } return baos.toByteArray(); }
+    	
 
     /**
      * Beware of high memory requirements when creating large S3 objects when the Content-Length
@@ -1864,6 +1871,20 @@ public abstract class RestStorageService extends StorageService implements JetS3
         HttpEntity requestEntity = null;
 
         if(object.getDataInputStream() != null) {
+        	
+        	try
+        	{
+	        	InputStream is = object.getDataInputStream();
+	        	ByteArrayInputStream greetingIS = new ByteArrayInputStream(toByteArrayUsingJava(is));
+	        	object.setDataInputStream(greetingIS);
+	        	object.setContentLength(greetingIS.available());
+        	}
+        	catch(IOException e)
+        	{
+        		log.warn("Error in setting content length", e);
+        	}
+        	
+        	
             if(object.containsMetadata(StorageObject.METADATA_HEADER_CONTENT_LENGTH)) {
                 if(log.isDebugEnabled()) {
                     log.debug("Uploading object data with Content-Length: " + object.getContentLength());
