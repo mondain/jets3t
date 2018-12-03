@@ -29,3 +29,8 @@ hs_err_pid*
 .recommenders
 
 target/
+
+# Local scripts
+build.sh
+deploy.sh
+
