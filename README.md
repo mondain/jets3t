@@ -1,15 +1,16 @@
 JetS3t
 ======
 
-JetS3t is a free, open-source Java toolkit and application suite for
-Amazon Simple Storage Service (Amazon S3), Amazon CloudFront content
-delivery network, and Google Storage for Developers.
+Disclaimer
+-----------
+This is a fork and continuation of the original [JetS3t project](https://bitbucket.org/jmurty/jets3t/wiki/Home) by James Murty.
 
-For further information, documentation, and links to discussion lists and
-other resources, please visit the [JetS3t web site][jets3t]. There are also
-[historic release notes][jets3t-releasenotes-hist] summarizing the changes
-in past JetS3t releases, and [pending release notes][jets3t-releasenotes-pend]
-that include details about the up-coming release.
+Overview
+---------
+JetS3t is a free, open-source Java toolkit and application suite for Amazon Simple Storage Service (Amazon S3), Amazon CloudFront content delivery network, and Google Storage for Developers.
+
+For further information, documentation, and links to discussion lists and other resources, please visit the [JetS3t web site][jets3t]. There are also [historic release notes][jets3t-releasenotes-hist] summarizing the changes 
+in past JetS3t releases, and [pending release notes][jets3t-releasenotes-pend] that include details about the up-coming release.
 
 [jets3t]: http://www.jets3t.org/
 [jets3t-toolkit]: http://www.jets3t.org/toolkit/toolkit.html
@@ -27,8 +28,7 @@ Running Applications
 --------------------
 
 Each application can be run using a script in the _bin_ directory.
-To run an application, such as Cockpit, run the appropriate script from
-the bin directory for your JetS3t version ("x.y.z" in these examples).
+To run an application, such as Cockpit, run the appropriate script from the bin directory for your JetS3t version ("x.y.z" in these examples).
 
 Windows:
 
@@ -43,12 +43,9 @@ Unixy:
 Configuration files
 -------------------
 
-Applications or library components generally read text configuration files,
-which must be available in the classpath of a running application to be useful.
+Applications or library components generally read text configuration files, which must be available in the classpath of a running application to be useful.
 
-Example configuration files are located in the _configs_ directory. The
-run scripts in the _bin_ directory automatically include this _configs_
-directory in the classpath when running JetS3t apps.
+Example configuration files are located in the _configs_ directory. The run scripts in the _bin_ directory automatically include this _configs_ directory in the classpath when running JetS3t apps.
 
 The configuration files include:
 
@@ -61,17 +58,14 @@ The configuration files include:
  * `cockpitlite.properties`
     Properties for the CockpitLite application
  * `mime.types`
-    Maps file extensions to the appropriate mime/content type.
-    For example, the "txt" extension maps to "text/plain".
+    Maps file extensions to the appropriate mime/content type. For example, the "txt" extension maps to "text/plain".
  * `commons-logging.properties`
     Defines which logging implementation to use.
  * `log4j.properties`
-    When Log4J is the chosen logging implementation,
-    these settings control how much logging information is displayed, and
+    When Log4J is the chosen logging implementation, these settings control how much logging information is displayed, and
     the way it is displayed.
  * `simplelog.properties`
-    When SimpleLog is the chosen logging implementation,
-    these settings control the logging information that is displayed.
+    When SimpleLog is the chosen logging implementation, these settings control the logging information that is displayed.
 
 
 JAR files
@@ -118,35 +112,32 @@ and include the following:
 Compatibility and Performance of Distributed Jar files
 ------------------------------------------------------
 
-The class files in these jars are compiled for compatibility with Sun's
-JDK 5 and later, and have debugging turned on to provide more information
-if errors occur.
+The class files in these jars are compiled for compatibility with Sun's JDK 8 and later, and have debugging turned on to provide more information if errors occur.
 
-To use JetS3t in high-performance scenarios, the classes should be
-recompiled using the latest version of Java available to you and with
-debugging turned off.
+To use JetS3t in high-performance scenarios, the classes should be recompiled using the latest version of Java available to you and with debugging turned off.
 
 
 Building JetS3t from source
 ---------------------------
 
-The JetS3t distribution package includes an ANT build script (`build.xml`) that
-allows you to easily rebuild the project yourself, and a default set of build
-properties (`build.properties`) that you may wish to modify.
+The JetS3t distribution package is built using Maven.
 
-The following ANT command will recompile the JetS3t library and applications:
+The following command will recompile the JetS3t library and applications: `mvn clean package`
 
-    ant rebuild-all
+JetS3t applications or applets may not be building correctly as of project takeover, but they will be soon. If you encounter issues with the current builds starting with `0.9.6-SNAPSHOT` please file issue reports.
 
-To repackage JetS3t applications or applets with your modifications for
-redistribution:
-
-    ant repackage-applets
+Maven
+--------
+```xml
+  <dependency>
+      <groupId>org.jets3t</groupId>
+      <artifactId>jets3t</artifactId>
+      <version>0.9.6-SNAPSHOT</version>
+  </dependency>
+```
 
 
 Servlets
 --------
 
-The JetS3t application suite includes a servlet implementation of a Gatekeeper
-to offer mediated third-party access to your S3 resources. The deployable WAR
-file for this servlet is located in the _servlets/gatekeeper_ directory.
+The JetS3t application suite includes a servlet implementation of a Gatekeeper to offer mediated third-party access to your S3 resources. The deployable WAR file for this servlet is located in the _servlets/gatekeeper_ directory.
