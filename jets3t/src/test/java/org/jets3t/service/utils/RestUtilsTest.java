@@ -21,4 +21,9 @@ public class RestUtilsTest extends TestCase {
         assertEquals("a/p", RestUtils.encodeUrlPath("a/p", "/"));
         assertEquals("a/p/", RestUtils.encodeUrlPath("a/p/", "/"));
     }
+
+    public void testRepeatedSlashes() throws Exception {
+        assertEquals("a//p", RestUtils.encodeUrlPath("a//p", "/"));
+        assertEquals("a/p//", RestUtils.encodeUrlPath("a/p//", "/"));
+    }
 }
