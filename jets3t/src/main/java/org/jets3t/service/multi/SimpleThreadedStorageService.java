@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jets3t.service.StorageService;
 import org.jets3t.service.ServiceException;
+import org.jets3t.service.StorageService;
 import org.jets3t.service.model.StorageBucket;
 import org.jets3t.service.model.StorageObject;
 import org.jets3t.service.model.ThrowableBearingStorageObject;

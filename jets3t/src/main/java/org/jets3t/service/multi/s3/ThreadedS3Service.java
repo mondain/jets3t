@@ -3,8 +3,6 @@ package org.jets3t.service.multi.s3;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.io.BytesProgressWatcher;
@@ -18,9 +16,12 @@ import org.jets3t.service.multi.StorageServiceEventListener;
 import org.jets3t.service.multi.ThreadWatcher;
 import org.jets3t.service.multi.ThreadedStorageService;
 import org.jets3t.service.multi.event.ServiceEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThreadedS3Service extends ThreadedStorageService {
-    private static final Log log = LogFactory.getLog(ThreadedS3Service.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(ThreadedS3Service.class);
 
     public ThreadedS3Service(S3Service service, StorageServiceEventListener listener)
         throws ServiceException

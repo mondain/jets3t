@@ -1,6 +1,18 @@
 package org.jets3t.service;
 
-import junit.framework.TestCase;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
@@ -9,11 +21,7 @@ import org.jets3t.service.security.AWSCredentials;
 import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.MultipartUtils;
 
-import java.io.*;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import junit.framework.TestCase;
 
 public class TestRestS3V4SignatureUploads extends TestCase {
     protected String TEST_PROPERTIES_FILENAME = "test.properties";

@@ -23,8 +23,8 @@ import java.text.ParseException;
 
 import javax.swing.text.NumberFormatter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Formats numeric byte values into human-readable strings.
@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @author James Murty
  */
 public class ByteFormatter {
-    private static final Log log = LogFactory.getLog(ByteFormatter.class);
+    private static final Logger log = LoggerFactory.getLogger(ByteFormatter.class);
 
     private String gigabyteSuffix = null;
     private String megabyteSuffix = null;

@@ -18,13 +18,13 @@
  */
 package org.jets3t.service.mx;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.model.StorageBucket;
 import org.jets3t.service.model.StorageObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MxDelegate implements MxInterface {
-    private static final Log log = LogFactory.getLog(MxDelegate.class);
+    private static final Logger log = LoggerFactory.getLogger(MxDelegate.class);
 
     private MxInterface handler = null;
 

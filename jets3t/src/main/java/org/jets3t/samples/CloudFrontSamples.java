@@ -23,12 +23,12 @@ import java.util.List;
 
 import org.jets3t.service.CloudFrontService;
 import org.jets3t.service.model.cloudfront.CustomOrigin;
-import org.jets3t.service.model.cloudfront.Invalidation;
-import org.jets3t.service.model.cloudfront.InvalidationSummary;
-import org.jets3t.service.model.cloudfront.OriginAccessIdentity;
 import org.jets3t.service.model.cloudfront.Distribution;
 import org.jets3t.service.model.cloudfront.DistributionConfig;
+import org.jets3t.service.model.cloudfront.Invalidation;
+import org.jets3t.service.model.cloudfront.InvalidationSummary;
 import org.jets3t.service.model.cloudfront.LoggingStatus;
+import org.jets3t.service.model.cloudfront.OriginAccessIdentity;
 import org.jets3t.service.model.cloudfront.OriginAccessIdentityConfig;
 import org.jets3t.service.model.cloudfront.S3Origin;
 import org.jets3t.service.model.cloudfront.StreamingDistribution;

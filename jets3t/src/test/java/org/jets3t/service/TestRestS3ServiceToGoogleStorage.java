@@ -18,9 +18,6 @@
  */
 package org.jets3t.service;
 
-import org.jets3t.service.Constants;
-import org.jets3t.service.Jets3tProperties;
-import org.jets3t.service.ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.impl.rest.httpclient.RestStorageService;

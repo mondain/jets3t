@@ -18,8 +18,15 @@
  */
 package org.jets3t.service.impl.rest.httpclient;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -43,16 +50,8 @@ import org.jets3t.service.mx.MxDelegate;
 import org.jets3t.service.security.OAuth2Credentials;
 import org.jets3t.service.security.OAuth2Tokens;
 import org.jets3t.service.security.ProviderCredentials;
-import org.jets3t.service.utils.ServiceUtils;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -67,7 +66,8 @@ import java.util.Map;
  * @author Google Developers
  */
 public class GoogleStorageService extends RestStorageService {
-    private static final Log log = LogFactory.getLog(GoogleStorageService.class);
+
+    private static final Logger log = LoggerFactory.getLogger(GoogleStorageService.class);
 
     private static final String GOOGLE_SIGNATURE_IDENTIFIER = "GOOG1";
     private static final String GOOGLE_REST_HEADER_PREFIX = "x-goog-";
@@ -199,7 +199,7 @@ public class GoogleStorageService extends RestStorageService {
     @Override
     public List<String> getResourceParameterNames() {
         // Special HTTP parameter names that refer to resources in Google Storage
-        return Arrays.asList("acl", "logging", "location");
+        return Arrays.asList("acl", "cors", "logging", "location");
     }
 
     /**
@@ -470,8 +470,7 @@ public class GoogleStorageService extends RestStorageService {
                         "Cannot authenticate using OAuth2 until initial tokens are provided"
                                 + ", i.e. via setOAuth2Tokens()");
             }
-            log.debug("Authorizing service request with OAuth2 access token: "
-                    + tokens.getAccessToken());
+            log.debug("Authorizing service request with OAuth2 access token: {}", tokens.getAccessToken());
             httpMethod.setHeader("Authorization", "OAuth " + tokens.getAccessToken());
             httpMethod.setHeader("x-goog-api-version", "2");
         } else {
@@ -565,7 +564,7 @@ public class GoogleStorageService extends RestStorageService {
     {
         // To remove the website configuration, you just send an empty website
         // configuration (with no MainPageSuffix and NotFoundPage elements)
-        this.setWebsiteConfigImpl(bucketName,  new GSWebsiteConfig());
+        this.setWebsiteConfigImpl(bucketName, new GSWebsiteConfig());
     }
 
     public CORSConfiguration getBucketCORSConfiguration(String bucketName) throws ServiceException {
@@ -580,19 +579,17 @@ public class GoogleStorageService extends RestStorageService {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void setBucketCORSConfiguration(String bucketName, CORSConfiguration corsConfig) throws ServiceException {
         Map<String, String> requestParameters = new HashMap<>();
         requestParameters.put("cors", "");
         String xml;
-        String xmlMd5Hash;
         try {
             xml = corsConfig.toXml();
-            xmlMd5Hash = ServiceUtils.toBase64(ServiceUtils.computeMD5Hash(xml.getBytes(Constants.DEFAULT_ENCODING)));
         } catch (Exception e) {
             throw new S3ServiceException("Unable to build CORSConfiguration XML document", e);
         }
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("Content-MD5", xmlMd5Hash);
         try {
             performRestPut(bucketName, null, metadata, requestParameters, new StringEntity(xml, "text/plain", Constants.DEFAULT_ENCODING), true);
         } catch (ServiceException se) {

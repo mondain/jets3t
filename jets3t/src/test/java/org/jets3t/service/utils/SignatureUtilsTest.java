@@ -1,12 +1,12 @@
 package org.jets3t.service.utils;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class SignatureUtilsTest {
 

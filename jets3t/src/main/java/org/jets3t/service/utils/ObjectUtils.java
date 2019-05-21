@@ -27,8 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.acl.AccessControlList;
@@ -40,6 +38,8 @@ import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.StorageObject;
 import org.jets3t.service.multi.DownloadPackage;
 import org.jets3t.service.security.EncryptionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for preparing files for upload into S3, or for download from
@@ -49,7 +49,8 @@ import org.jets3t.service.security.EncryptionUtil;
  * @author James Murty
  */
 public class ObjectUtils {
-    private static final Log log = LogFactory.getLog(ObjectUtils.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(ObjectUtils.class);
 
     /**
      * Prepares a file for upload to a named object in S3, potentially transforming it if

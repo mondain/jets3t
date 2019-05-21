@@ -26,13 +26,13 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.crypto.NoSuchPaddingException;
+
 import org.jets3t.service.io.GZipInflatingOutputStream;
 import org.jets3t.service.model.StorageObject;
 import org.jets3t.service.security.EncryptionUtil;
-
-import javax.crypto.NoSuchPaddingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A simple container object to associate a {@link StorageObject} with an
@@ -41,7 +41,8 @@ import javax.crypto.NoSuchPaddingException;
  * @author James Murty
  */
 public class DownloadPackage {
-    private static final Log log = LogFactory.getLog(DownloadPackage.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(DownloadPackage.class);
 
     protected StorageObject object = null;
 

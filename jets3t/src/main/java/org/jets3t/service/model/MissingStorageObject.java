@@ -1,7 +1,5 @@
 package org.jets3t.service.model;
 
-import java.io.InputStream;
-
 public class MissingStorageObject extends StorageObject {
 	
 	// mth 2014-01-26

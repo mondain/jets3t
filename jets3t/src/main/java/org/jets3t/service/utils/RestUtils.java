@@ -37,8 +37,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
 import org.apache.commons.httpclient.contrib.proxy.PluginProxyUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -77,6 +75,8 @@ import org.jets3t.service.Constants;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.impl.rest.httpclient.JetS3tRequestAuthorizer;
 import org.jets3t.service.io.UnrecoverableIOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utilities useful for REST/HTTP S3Service implementations.
@@ -85,7 +85,7 @@ import org.jets3t.service.io.UnrecoverableIOException;
  */
 public class RestUtils {
 
-    private static final Log log = LogFactory.getLog(RestUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(RestUtils.class);
 
     /**
      * A list of HTTP-specific header names, that may be present in S3Objects as metadata but
@@ -228,7 +228,6 @@ public class RestUtils {
         for (Map.Entry<String, Object> entry: interestingHeaders.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-
             if (key.startsWith(headerPrefix)) {
                 canonicalStringBuf.append(key).append(':').append(value);
             } else {
@@ -292,7 +291,7 @@ public class RestUtils {
     }
 
     /**
-     * Initialises the and configures an {@link HttpClientBuilder} in
+     * Initializes the and configures an {@link HttpClientBuilder} in
      * preparation for it to create new HTTP client instances.
      *
      * @param requestAuthorizer

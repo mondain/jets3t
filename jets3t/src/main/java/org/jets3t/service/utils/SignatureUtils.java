@@ -33,12 +33,9 @@ import java.util.SimpleTimeZone;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;

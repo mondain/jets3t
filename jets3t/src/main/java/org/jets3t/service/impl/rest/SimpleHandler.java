@@ -1,15 +1,16 @@
 package org.jets3t.service.impl.rest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.lang.reflect.Method;
-
 public class SimpleHandler extends DefaultHandler {
-    private static final Log log = LogFactory.getLog(SimpleHandler.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(SimpleHandler.class);
 
     private XMLReader xr = null;
     private StringBuffer textContent = null;

@@ -18,11 +18,11 @@
  */
 package org.jets3t.service.acl;
 
-import com.jamesmurty.utils.XMLBuilder;
-
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import com.jamesmurty.utils.XMLBuilder;
 
 /**
  * Represents a grantee identified by their canonical Amazon ID, which is something along the lines

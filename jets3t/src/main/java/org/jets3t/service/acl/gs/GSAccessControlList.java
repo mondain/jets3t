@@ -18,6 +18,8 @@
  */
 package org.jets3t.service.acl.gs;
 
+import java.util.Arrays;
+
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -27,8 +29,6 @@ import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.GrantAndPermission;
 import org.jets3t.service.acl.GranteeInterface;
 import org.jets3t.service.acl.Permission;
-
-import java.util.Arrays;
 
 import com.jamesmurty.utils.XMLBuilder;
 

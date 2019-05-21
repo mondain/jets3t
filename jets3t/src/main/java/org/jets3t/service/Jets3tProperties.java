@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to load and store JetS3t-specific properties.
@@ -44,11 +44,12 @@ import org.apache.commons.logging.LogFactory;
  * @author James Murty
  */
 public class Jets3tProperties implements Serializable {
+
     public static final String JETS3T_PROPERTIES_ID = "org.jets3t.service.JetS3tProperties";
 
     private static final long serialVersionUID = -822234326095333142L;
 
-    private static final Log log = LogFactory.getLog(Jets3tProperties.class);
+    private static final Logger log = LoggerFactory.getLogger(Jets3tProperties.class);
 
     /**
      * Stores the jets3t properties.

@@ -26,8 +26,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.impl.rest.XmlResponsesSaxParser;
 import org.jets3t.service.model.StorageBucket;
@@ -36,6 +34,8 @@ import org.jets3t.service.model.StorageOwner;
 import org.jets3t.service.mx.MxDelegate;
 import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.RestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A service that handles communication with a storage service, offering all the operations that
@@ -59,7 +59,7 @@ import org.jets3t.service.utils.RestUtils;
  */
 public abstract class StorageService {
 
-    private static final Log log = LogFactory.getLog(StorageService.class);
+    private static final Logger log = LoggerFactory.getLogger(StorageService.class);
 
     /**
      * Status code returned by {@link #checkBucketStatus(String)} for a bucket

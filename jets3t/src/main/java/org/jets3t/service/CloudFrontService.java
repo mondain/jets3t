@@ -18,8 +18,16 @@
  */
 package org.jets3t.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
@@ -64,15 +72,8 @@ import org.jets3t.service.security.EncryptionUtil;
 import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jamesmurty.utils.XMLBuilder;
 
@@ -88,7 +89,8 @@ import com.jamesmurty.utils.XMLBuilder;
  * @author James Murty
  */
 public class CloudFrontService implements JetS3tRequestAuthorizer {
-    private static final Log log = LogFactory.getLog(CloudFrontService.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(CloudFrontService.class);
 
     public static final String ENDPOINT = "https://cloudfront.amazonaws.com/";
     public static final String VERSION = "2012-05-05";
@@ -119,7 +121,7 @@ public class CloudFrontService implements JetS3tRequestAuthorizer {
     protected long timeOffset = 0;
 
     /**
-     * Constructs the service and initialises its properties.
+     * Constructs the service and initializes its properties.
      *
      * @param credentials                    the Storage Provider user credentials to use when communicating with CloudFront
      * @param invokingApplicationDescription a short description of the application using the service, suitable for inclusion in a

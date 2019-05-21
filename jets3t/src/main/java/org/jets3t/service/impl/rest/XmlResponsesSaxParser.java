@@ -29,8 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.ServiceException;
@@ -73,6 +71,8 @@ import org.jets3t.service.model.StorageObject;
 import org.jets3t.service.model.StorageOwner;
 import org.jets3t.service.model.WebsiteConfig;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
@@ -84,7 +84,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author James Murty
  */
 public class XmlResponsesSaxParser {
-    private static final Log log = LogFactory.getLog(XmlResponsesSaxParser.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(XmlResponsesSaxParser.class);
 
     private XMLReader xr = null;
 

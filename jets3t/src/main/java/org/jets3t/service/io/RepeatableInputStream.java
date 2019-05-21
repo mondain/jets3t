@@ -21,9 +21,9 @@ package org.jets3t.service.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Jets3tProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A repeatable input stream wrapper for any input stream. This input stream relies on buffered
@@ -43,7 +43,8 @@ import org.jets3t.service.Jets3tProperties;
  * @author James Murty
  */
 public class RepeatableInputStream extends InputStream implements InputStreamWrapper {
-    private static final Log log = LogFactory.getLog(RepeatableInputStream.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(RepeatableInputStream.class);
 
     private InputStream is = null;
     private int bufferSize = 0;

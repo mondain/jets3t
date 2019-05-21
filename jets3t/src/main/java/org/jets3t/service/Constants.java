@@ -31,7 +31,7 @@ public class Constants {
     /**
      * The JetS3t suite version number implemented by this service.
      */
-    public static final String JETS3T_VERSION = "0.9.4";
+    public static final String JETS3T_VERSION = "0.9.6";
 
     public static String S3_DEFAULT_HOSTNAME = "s3.amazonaws.com";
     public static String GS_DEFAULT_HOSTNAME = "storage.googleapis.com";

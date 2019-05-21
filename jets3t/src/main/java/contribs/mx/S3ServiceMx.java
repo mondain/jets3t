@@ -19,6 +19,8 @@
  */
 package contribs.mx;
 
+import java.util.List;
+
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -27,7 +29,6 @@ import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import java.util.List;
 
 public class S3ServiceMx implements S3ServiceMxMBean {
     static final String DOMAIN = "jets3t";

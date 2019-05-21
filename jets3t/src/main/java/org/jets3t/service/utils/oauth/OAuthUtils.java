@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -43,6 +41,8 @@ import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.security.OAuth2Tokens;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.oauth.OAuthConstants.GSOAuth2_10;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -57,7 +57,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @see <a href="http://code.google.com/apis/accounts/docs/OAuth2.html">Using OAuth 2.0 to Access Google APIs</a>
  */
 public class OAuthUtils {
-    private static final Log log = LogFactory.getLog(OAuthUtils.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(OAuthUtils.class);
 
     protected static final String HTTP_USER_AGENT = "OAuthUtils/" + Constants.JETS3T_VERSION;
 

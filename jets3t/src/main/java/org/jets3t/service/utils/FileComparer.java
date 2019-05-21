@@ -42,8 +42,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.ServiceException;
@@ -57,6 +55,8 @@ import org.jets3t.service.multi.StorageServiceEventListener;
 import org.jets3t.service.multi.ThreadedStorageService;
 import org.jets3t.service.multi.event.GetObjectHeadsEvent;
 import org.jets3t.service.multi.event.ListObjectsEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File comparison utility to compare files on the local computer with objects present in a service
@@ -71,7 +71,7 @@ import org.jets3t.service.multi.event.ListObjectsEvent;
  * @author James Murty
  */
 public class FileComparer {
-    private static final Log log = LogFactory.getLog(FileComparer.class);
+    private static final Logger log = LoggerFactory.getLogger(FileComparer.class);
 
     private Jets3tProperties jets3tProperties = null;
 

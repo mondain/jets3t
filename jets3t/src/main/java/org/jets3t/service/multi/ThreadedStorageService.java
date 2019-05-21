@@ -29,8 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.ServiceException;
@@ -57,6 +55,8 @@ import org.jets3t.service.multi.event.ServiceEvent;
 import org.jets3t.service.multi.event.UpdateACLEvent;
 import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Storage service wrapper that performs multiple service requests at a time using
@@ -81,7 +81,8 @@ import org.jets3t.service.utils.ServiceUtils;
  * @author James Murty
  */
 public class ThreadedStorageService {
-    private static final Log log = LogFactory.getLog(ThreadedStorageService.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(ThreadedStorageService.class);
 
     protected StorageService storageService = null;
     protected final boolean[] isShutdown = new boolean[] { false };
@@ -1706,7 +1707,7 @@ public class ThreadedStorageService {
      * notifications.
      */
     protected abstract class ThreadGroupManager {
-        private final Log log = LogFactory.getLog(ThreadGroupManager.class);
+        private final Logger log = LoggerFactory.getLogger(ThreadGroupManager.class);
         private int maxThreadCount = 1;
 
         /**

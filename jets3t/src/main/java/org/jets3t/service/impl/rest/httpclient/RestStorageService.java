@@ -39,8 +39,6 @@ import java.util.TreeMap;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -85,6 +83,8 @@ import org.jets3t.service.utils.Mimetypes;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
 import org.jets3t.service.utils.SignatureUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jamesmurty.utils.XMLBuilder;
 
@@ -100,7 +100,8 @@ import com.jamesmurty.utils.XMLBuilder;
  * @author James Murty, Google Developers
  */
 public abstract class RestStorageService extends StorageService implements JetS3tRequestAuthorizer {
-    private static final Log log = LogFactory.getLog(RestStorageService.class);
+
+    private static final Logger log = LoggerFactory.getLogger(RestStorageService.class);
 
     protected enum HTTP_METHOD {PUT, POST, HEAD, GET, DELETE}
 
@@ -1350,7 +1351,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
             url = "http://" + hostname + ":" + insecurePort + virtualPath + resourceString;
         }
         if(log.isDebugEnabled()) {
-            log.debug("S3 URL: " + url);
+            log.debug("URL: " + url);
         }
 
         // Add additional request parameters to the URL for special cases (eg ACL operations)

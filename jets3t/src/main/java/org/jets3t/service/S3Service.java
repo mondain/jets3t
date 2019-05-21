@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.CredentialsProvider;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.GrantAndPermission;
@@ -52,9 +50,9 @@ import org.jets3t.service.model.S3BucketVersioningStatus;
 import org.jets3t.service.model.S3DeleteMarker;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.S3Version;
+import org.jets3t.service.model.S3WebsiteConfig;
 import org.jets3t.service.model.StorageBucket;
 import org.jets3t.service.model.StorageObject;
-import org.jets3t.service.model.S3WebsiteConfig;
 import org.jets3t.service.model.container.ObjectKeyAndVersion;
 import org.jets3t.service.mx.MxDelegate;
 import org.jets3t.service.security.AWSDevPayCredentials;
@@ -63,8 +61,10 @@ import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.MultipartUtils;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
-import org.jets3t.service.utils.signedurl.SignedUrlHandler;
 import org.jets3t.service.utils.SignatureUtils;
+import org.jets3t.service.utils.signedurl.SignedUrlHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A service that handles communication with S3, offering all the operations that can be performed
@@ -90,7 +90,7 @@ import org.jets3t.service.utils.SignatureUtils;
  */
 public abstract class S3Service extends RestStorageService implements SignedUrlHandler {
 
-    private static final Log log = LogFactory.getLog(S3Service.class);
+    private static final Logger log = LoggerFactory.getLogger(S3Service.class);
 
     protected S3Service(ProviderCredentials credentials, String invokingApplicationDescription, CredentialsProvider credentialsProvider, Jets3tProperties jets3tProperties) {
         super(credentials, invokingApplicationDescription, credentialsProvider, jets3tProperties);

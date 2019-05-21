@@ -33,8 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.S3ObjectsChunk;
@@ -54,6 +52,8 @@ import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.ServiceUtils;
 import org.jets3t.service.utils.signedurl.SignedUrlAndObject;
 import org.jets3t.service.utils.signedurl.SignedUrlHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * S3 service wrapper that performs multiple S3 requests at a time using multi-threading and an
@@ -82,7 +82,7 @@ import org.jets3t.service.utils.signedurl.SignedUrlHandler;
 @Deprecated
 public class S3ServiceMulti {
 
-    private static final Log log = LogFactory.getLog(S3ServiceMulti.class);
+    private static final Logger log = LoggerFactory.getLogger(S3ServiceMulti.class);
 
     private S3Service s3Service = null;
     private final boolean[] isShutdown = new boolean[] { false };
@@ -2507,7 +2507,7 @@ public class S3ServiceMulti {
      * notifications.
      */
     private abstract class ThreadGroupManager {
-        private final Log log = LogFactory.getLog(ThreadGroupManager.class);
+        private final Logger log = LoggerFactory.getLogger(ThreadGroupManager.class);
         private int maxThreadCount = 1;
 
         /**

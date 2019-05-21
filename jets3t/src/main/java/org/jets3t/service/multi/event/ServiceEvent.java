@@ -18,8 +18,8 @@
  */
 package org.jets3t.service.multi.event;
 
-import org.jets3t.service.multi.ThreadedStorageService;
 import org.jets3t.service.multi.ThreadWatcher;
+import org.jets3t.service.multi.ThreadedStorageService;
 
 /**
  * Base class of all events produced by {@link ThreadedStorageService}.

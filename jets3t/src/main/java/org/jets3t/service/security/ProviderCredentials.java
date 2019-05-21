@@ -34,11 +34,11 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class to contain the credentials of a user.
@@ -48,7 +48,7 @@ import org.jets3t.service.utils.ServiceUtils;
  * @author Google developers
  */
 public abstract class ProviderCredentials {
-    protected static final Log log = LogFactory.getLog(ProviderCredentials.class);
+    protected static final Logger log = LoggerFactory.getLogger(ProviderCredentials.class);
 
     protected static final int CREDENTIALS_STORAGE_VERSION = 3;
     protected static final String V2_KEYS_DELIMITER = "AWSKEYS";

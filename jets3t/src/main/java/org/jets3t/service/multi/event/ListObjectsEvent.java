@@ -21,8 +21,8 @@ package org.jets3t.service.multi.event;
 import java.util.List;
 
 import org.jets3t.service.StorageObjectsChunk;
-import org.jets3t.service.multi.ThreadedStorageService;
 import org.jets3t.service.multi.ThreadWatcher;
+import org.jets3t.service.multi.ThreadedStorageService;
 
 /**
  * Multi-threaded service event fired by

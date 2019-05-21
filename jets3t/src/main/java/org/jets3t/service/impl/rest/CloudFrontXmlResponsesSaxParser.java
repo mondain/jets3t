@@ -18,20 +18,6 @@
  */
 package org.jets3t.service.impl.rest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jets3t.service.CloudFrontServiceException;
-import org.jets3t.service.Constants;
-import org.jets3t.service.Jets3tProperties;
-import org.jets3t.service.S3ServiceException;
-import org.jets3t.service.ServiceException;
-import org.jets3t.service.model.cloudfront.*;
-import org.jets3t.service.model.cloudfront.CacheBehavior.ViewerProtocolPolicy;
-import org.jets3t.service.utils.ServiceUtils;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +29,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jets3t.service.CloudFrontServiceException;
+import org.jets3t.service.Constants;
+import org.jets3t.service.Jets3tProperties;
+import org.jets3t.service.S3ServiceException;
+import org.jets3t.service.ServiceException;
+import org.jets3t.service.model.cloudfront.CacheBehavior;
+import org.jets3t.service.model.cloudfront.CacheBehavior.ViewerProtocolPolicy;
+import org.jets3t.service.model.cloudfront.CustomOrigin;
+import org.jets3t.service.model.cloudfront.Distribution;
+import org.jets3t.service.model.cloudfront.DistributionConfig;
+import org.jets3t.service.model.cloudfront.Invalidation;
+import org.jets3t.service.model.cloudfront.InvalidationList;
+import org.jets3t.service.model.cloudfront.InvalidationSummary;
+import org.jets3t.service.model.cloudfront.LoggingStatus;
+import org.jets3t.service.model.cloudfront.Origin;
+import org.jets3t.service.model.cloudfront.OriginAccessIdentity;
+import org.jets3t.service.model.cloudfront.OriginAccessIdentityConfig;
+import org.jets3t.service.model.cloudfront.S3Origin;
+import org.jets3t.service.model.cloudfront.StreamingDistribution;
+import org.jets3t.service.model.cloudfront.StreamingDistributionConfig;
+import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+
 /**
  * XML Sax parser to read XML documents returned by the CloudFront service via
  * the REST interface, and convert these documents into JetS3t objects.
@@ -50,7 +63,8 @@ import java.util.Map;
  * @author James Murty
  */
 public class CloudFrontXmlResponsesSaxParser {
-    private static final Log log = LogFactory.getLog(CloudFrontXmlResponsesSaxParser.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(CloudFrontXmlResponsesSaxParser.class);
 
     private XMLReader xr = null;
     private Jets3tProperties properties = null;

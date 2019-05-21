@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class that maintains a listing of known Mimetypes, and determines the mimetype of files
@@ -50,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
  * @author James Murty
  */
 public class Mimetypes {
-    private static final Log log = LogFactory.getLog(Mimetypes.class);
+    private static final Logger log = LoggerFactory.getLogger(Mimetypes.class);
 
     // Mimetypes used frequently in jets3t.
     /**

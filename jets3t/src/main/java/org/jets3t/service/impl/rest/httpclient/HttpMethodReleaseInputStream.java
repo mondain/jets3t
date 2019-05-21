@@ -18,17 +18,16 @@
  */
 package org.jets3t.service.impl.rest.httpclient;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.io.InputStreamWrapper;
 import org.jets3t.service.io.InterruptableInputStream;
 import org.jets3t.service.utils.RestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to wrap InputStreams obtained from an HttpClient library's HttpMethod object, and
@@ -47,7 +46,7 @@ import org.jets3t.service.utils.RestUtils;
  *
  */
 public class HttpMethodReleaseInputStream extends InputStream implements InputStreamWrapper {
-    private static final Log log = LogFactory.getLog(HttpMethodReleaseInputStream.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpMethodReleaseInputStream.class);
 
     private InputStream inputStream = null;
     private HttpResponse httpResponse = null;

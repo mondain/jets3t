@@ -5,8 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
@@ -18,6 +16,8 @@ import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.ServiceUtils;
 import org.jets3t.service.utils.SignatureUtils;
 import org.junit.Test;
+
+import junit.framework.TestCase;
 
 
 /**

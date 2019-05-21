@@ -105,7 +105,7 @@ public class CORSConfiguration {
                    </ResponseHeaders>
                    <MaxAgeSec>3600</MaxAgeSec>
                  </Cors>
-               </CorsConfig>                 
+               </CorsConfig>
             */
             builder = XMLBuilder.create("CorsConfig");
             for (CORSRule rule : this.rules) {

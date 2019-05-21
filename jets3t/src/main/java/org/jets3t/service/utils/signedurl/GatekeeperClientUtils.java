@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.httpclient.contrib.proxy.PluginProxyUtil;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
@@ -41,15 +42,14 @@ import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.commons.httpclient.contrib.proxy.PluginProxyUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
 import org.jets3t.service.utils.gatekeeper.GatekeeperMessage;
 import org.jets3t.service.utils.gatekeeper.SignatureRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to handle common operations performed by Gatekeeper client applications.
@@ -60,7 +60,7 @@ public class GatekeeperClientUtils {
 
     private HttpClient httpClientGatekeeper = null;
 
-    private static final Log log = LogFactory.getLog(GatekeeperClientUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(GatekeeperClientUtils.class);
 
     /**
      * Variable to store application exceptions, so that client failure information can be

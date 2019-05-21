@@ -18,13 +18,13 @@
  */
 package org.jets3t.service.acl.gs;
 
-import com.jamesmurty.utils.XMLBuilder;
-
-import org.jets3t.service.acl.GroupGrantee;
-
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import org.jets3t.service.acl.GroupGrantee;
+
+import com.jamesmurty.utils.XMLBuilder;
 
 /**
  * Represents a grant to all authenticated users.

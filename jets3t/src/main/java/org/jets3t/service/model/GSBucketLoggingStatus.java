@@ -18,13 +18,13 @@
  */
 package org.jets3t.service.model;
 
-import org.jets3t.service.Constants;
-import org.jets3t.service.acl.gs.GSAccessControlList;
-import org.jets3t.service.impl.rest.httpclient.GoogleStorageService;
-
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import org.jets3t.service.Constants;
+import org.jets3t.service.acl.gs.GSAccessControlList;
+import org.jets3t.service.impl.rest.httpclient.GoogleStorageService;
 
 import com.jamesmurty.utils.XMLBuilder;
 

@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.management.ObjectName;
 
-import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.StorageObject;
 
 public class S3ObjectMx implements S3ObjectMxMBean {

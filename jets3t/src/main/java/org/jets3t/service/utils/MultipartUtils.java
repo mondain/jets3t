@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.ServiceException;
@@ -42,6 +40,8 @@ import org.jets3t.service.multi.s3.MultipartUploadAndParts;
 import org.jets3t.service.multi.s3.S3ServiceEventAdaptor;
 import org.jets3t.service.multi.s3.S3ServiceEventListener;
 import org.jets3t.service.multi.s3.ThreadedS3Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tool to simplify working with the multipart uploads feature offered by
@@ -50,7 +50,7 @@ import org.jets3t.service.multi.s3.ThreadedS3Service;
  * @author jmurty
  */
 public class MultipartUtils {
-    private static final Log log = LogFactory.getLog(MultipartUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(MultipartUtils.class);
 
     /**
      * Minimum multipart upload part size supported by S3: 5 MB.

@@ -3,11 +3,11 @@ package org.jets3t.service.security;
 import java.io.IOException;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.jets3t.service.utils.ServiceUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import junit.framework.TestCase;
 
 public class AWSEC2IAMSessionCredentialsTest extends TestCase {
 

@@ -49,11 +49,11 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.model.S3Object;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -66,7 +66,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class ServiceUtils {
     public static String HASH_SHA256 = "SHA-256";
 
-    private static final Log log = LogFactory.getLog(ServiceUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ServiceUtils.class);
 
     protected static final SimpleDateFormat iso8601DateParser = new SimpleDateFormat(
         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -502,7 +502,7 @@ public class ServiceUtils {
                             try {
                                 value = ServiceUtils.parseIso8601Date(value.toString());
                             } catch (ParseException pe2) {
-                                // Log original exception if the work-around fails.
+                                // Logger original exception if the work-around fails.
                                 if (log.isWarnEnabled()) {
                                     log.warn("Date string is not RFC 822 compliant for metadata field " + key, pe);
                                 }

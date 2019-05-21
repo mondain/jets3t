@@ -34,9 +34,9 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class that gives applets the ability to detect proxy host settings.
@@ -66,7 +66,7 @@ import org.apache.http.HttpHost;
 public class PluginProxyUtil {
 
     /** Log object for this class */
-    private static final Log LOG = LogFactory.getLog(PluginProxyUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginProxyUtil.class);
 
     /**
      * This is used internally to indicate that no proxy detection succeeded

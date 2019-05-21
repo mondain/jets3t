@@ -18,13 +18,14 @@
  */
 package org.jets3t.service.model;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
+
 import org.jets3t.service.Constants;
 
 /**

@@ -20,7 +20,6 @@ package org.jets3t.service.multi.s3;
 
 import org.jets3t.service.model.StorageObject;
 import org.jets3t.service.multi.ThreadWatcher;
-import org.jets3t.service.multi.s3.ThreadedS3Service;
 import org.jets3t.service.multi.event.ServiceEvent;
 
 /**

@@ -29,16 +29,15 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.IllegalArgumentException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.Constants;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.io.RepeatableFileInputStream;
 import org.jets3t.service.utils.Mimetypes;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A generic storage object.
@@ -47,7 +46,7 @@ import org.jets3t.service.utils.ServiceUtils;
  */
 public class StorageObject extends BaseStorageItem implements Cloneable {
 
-    private static final Log log = LogFactory.getLog(StorageObject.class);
+    private static final Logger log = LoggerFactory.getLogger(StorageObject.class);
 
     /*
      * Metadata names used by JetS3t.

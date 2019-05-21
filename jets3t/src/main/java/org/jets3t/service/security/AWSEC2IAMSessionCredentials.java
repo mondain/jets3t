@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -44,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class AWSEC2IAMSessionCredentials extends AWSSessionCredentials {
 
-    private static final Log log = LogFactory.getLog(AWSEC2IAMSessionCredentials.class);
+    private static final Logger log = LoggerFactory.getLogger(AWSEC2IAMSessionCredentials.class);
 
     protected static String baseCredentialsUrl =
         "http://169.254.169.254/latest/meta-data/iam/security-credentials";

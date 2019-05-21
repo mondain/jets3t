@@ -18,8 +18,6 @@
  */
 package org.jets3t.service;
 
-import org.jets3t.service.ServiceException;
-import org.jets3t.service.StorageService;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.gs.GSAccessControlList;
 import org.jets3t.service.impl.rest.httpclient.GoogleStorageService;

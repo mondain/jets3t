@@ -19,10 +19,10 @@
 package org.jets3t.service.security;
 
 
+import java.io.IOException;
+
 import org.jets3t.service.utils.oauth.OAuthScope;
 import org.jets3t.service.utils.oauth.OAuthUtils;
-
-import java.io.IOException;
 
 /**
  * Class to contain OAuth2 client credentials for authenticating against an

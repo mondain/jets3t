@@ -18,11 +18,11 @@
  */
 package org.jets3t.service.model.cloudfront;
 
-import org.jets3t.service.model.cloudfront.CacheBehavior.ViewerProtocolPolicy;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+
+import org.jets3t.service.model.cloudfront.CacheBehavior.ViewerProtocolPolicy;
 
 
 public class DistributionConfig {

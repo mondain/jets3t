@@ -26,8 +26,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.message.BasicHeader;
@@ -37,6 +35,8 @@ import org.jets3t.service.io.InputStreamWrapper;
 import org.jets3t.service.io.ProgressMonitoredInputStream;
 import org.jets3t.service.io.RepeatableInputStream;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An HttpClient request entity whose underlying data can be re-read (that is, repeated)
@@ -56,9 +56,10 @@ import org.jets3t.service.utils.ServiceUtils;
  * @author James Murty
  */
 public class RepeatableRequestEntity implements HttpEntity {
+    
     public static final int DEFAULT_BUFFER_SIZE = 128 * 1024; // 128 KB
 
-    private static final Log log = LogFactory.getLog(RepeatableRequestEntity.class);
+    private static final Logger log = LoggerFactory.getLogger(RepeatableRequestEntity.class);
 
     private String name = null;
     private InputStream is = null;

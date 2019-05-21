@@ -30,8 +30,6 @@ import java.util.Map;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
@@ -72,6 +70,8 @@ import org.jets3t.service.security.AWSSessionCredentials;
 import org.jets3t.service.security.ProviderCredentials;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jamesmurty.utils.XMLBuilder;
 
@@ -88,7 +88,7 @@ import com.jamesmurty.utils.XMLBuilder;
  */
 public class RestS3Service extends S3Service {
 
-    private static final Log log = LogFactory.getLog(RestS3Service.class);
+    private static final Logger log = LoggerFactory.getLogger(RestS3Service.class);
 
     private static final String AWS_SIGNATURE_IDENTIFIER = "AWS";
 
@@ -103,7 +103,7 @@ public class RestS3Service extends S3Service {
     private boolean isRequesterPaysEnabled = false;
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials
      * the user credentials to use when communicating with S3, may be null in which case the
@@ -114,7 +114,7 @@ public class RestS3Service extends S3Service {
     }
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials
      * the S3 user credentials to use when communicating with S3, may be null in which case the
@@ -132,7 +132,7 @@ public class RestS3Service extends S3Service {
     }
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials
      * the S3 user credentials to use when communicating with S3, may be null in which case the
@@ -353,7 +353,7 @@ public class RestS3Service extends S3Service {
     @Override
     public List<String> getResourceParameterNames() {
         // Special HTTP parameter names that refer to resources in S3
-        return Arrays.asList("acl", "policy", "torrent", "logging", "location", "requestPayment", "versions", "versioning", "versionId", "uploads", "uploadId", "partNumber", "website", "notification", "lifecycle", "cors", "delete", "response-content-type", "response-content-language", "response-expires", "reponse-cache-control", "response-content-disposition", "response-content-encoding");
+        return Arrays.asList("acl", "cors", "policy", "torrent", "logging", "location", "requestPayment", "versions", "versioning", "versionId", "uploads", "uploadId", "partNumber", "website", "notification", "lifecycle", "delete", "response-content-type", "response-content-language", "response-expires", "reponse-cache-control", "response-content-disposition", "response-content-encoding");
     }
 
     /**

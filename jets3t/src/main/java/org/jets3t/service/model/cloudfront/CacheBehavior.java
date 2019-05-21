@@ -20,8 +20,6 @@ package org.jets3t.service.model.cloudfront;
 
 import java.util.Arrays;
 
-import com.jamesmurty.utils.XMLBuilder;
-
 
 public class CacheBehavior {
 

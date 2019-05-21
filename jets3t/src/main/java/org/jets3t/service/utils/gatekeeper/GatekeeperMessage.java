@@ -27,9 +27,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.utils.ServiceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a set of properties that will be sent to or received from a Gatekeeper service as
@@ -43,7 +43,8 @@ import org.jets3t.service.utils.ServiceUtils;
  * @author James Murty
  */
 public class GatekeeperMessage {
-    private static final Log log = LogFactory.getLog(GatekeeperMessage.class);
+    
+    private static final Logger log = LoggerFactory.getLogger(GatekeeperMessage.class);
 
     /**
      * All message property names are delimited with a vertical bar (<tt>|</tt>).

@@ -38,14 +38,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
-import org.jets3t.service.Constants;
-import org.jets3t.service.Jets3tProperties;
-import org.jets3t.service.S3Service;
-import org.jets3t.service.ServiceException;
-import org.jets3t.service.StorageObjectsChunk;
-import org.jets3t.service.StorageService;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.GrantAndPermission;
 import org.jets3t.service.acl.GranteeInterface;
@@ -79,6 +71,8 @@ import org.jets3t.service.utils.Mimetypes;
 import org.jets3t.service.utils.ObjectUtils;
 import org.jets3t.service.utils.RestUtils;
 import org.jets3t.service.utils.ServiceUtils;
+
+import junit.framework.TestCase;
 
 /**
  * Runs generic functional tests that any storage service implementation should be
@@ -1507,7 +1501,7 @@ public abstract class BaseStorageServiceTests extends TestCase {
             assertTrue("Expected logging to be enabled for bucket " + bucketName,
                 loggingStatus.isLoggingEnabled());
             assertEquals("Target bucket", bucketName, loggingStatus.getTargetBucketName());
-            assertEquals("Log file prefix", "access-log-", loggingStatus.getLogfilePrefix());
+            assertEquals("Logger file prefix", "access-log-", loggingStatus.getLogfilePrefix());
 
             // Add TargetGrants ACLs for log files (S3 only)
             if (!(service instanceof GoogleStorageService)) {

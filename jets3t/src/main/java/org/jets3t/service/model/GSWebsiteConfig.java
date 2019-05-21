@@ -18,11 +18,11 @@
  */
 package org.jets3t.service.model;
 
-import org.jets3t.service.Constants;
-
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import org.jets3t.service.Constants;
 
 import com.jamesmurty.utils.XMLBuilder;
 

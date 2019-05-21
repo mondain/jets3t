@@ -21,8 +21,8 @@ package org.jets3t.service.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Input stream wrapper that allows the underlying wrapped input stream to be interrupted.
@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * @author James Murty
  */
 public class InterruptableInputStream extends InputStream implements InputStreamWrapper {
-    private static final Log log = LogFactory.getLog(InterruptableInputStream.class);
+    private static final Logger log = LoggerFactory.getLogger(InterruptableInputStream.class);
 
     private InputStream inputStream = null;
 

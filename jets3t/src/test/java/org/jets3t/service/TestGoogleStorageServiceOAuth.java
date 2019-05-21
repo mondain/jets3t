@@ -18,12 +18,13 @@
  */
 package org.jets3t.service;
 
+import java.util.Arrays;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.impl.rest.httpclient.GoogleStorageService;
 import org.jets3t.service.model.GSWebsiteConfig;
@@ -31,8 +32,6 @@ import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.StorageBucket;
 import org.jets3t.service.security.OAuth2Credentials;
 import org.jets3t.service.security.ProviderCredentials;
-
-import java.util.Arrays;
 
 /**
  * Test Google Storage OAuth Access.

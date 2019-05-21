@@ -18,15 +18,15 @@
  */
 package contribs.mx;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jets3t.service.model.StorageBucket;
 import org.jets3t.service.model.StorageObject;
 import org.jets3t.service.mx.MxDelegate;
 import org.jets3t.service.mx.MxInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MxImpl implements MxInterface {
-    private static final Log log = LogFactory.getLog(MxDelegate.class);
+    private static final Logger log = LoggerFactory.getLogger(MxDelegate.class);
 
     public MxImpl() {
         log.debug("JMX instrumentation implementation started."

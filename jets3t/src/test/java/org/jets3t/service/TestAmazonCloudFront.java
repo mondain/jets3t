@@ -18,8 +18,12 @@
  */
 package org.jets3t.service;
 
-import org.jets3t.service.CloudFrontService;
-import org.jets3t.service.CloudFrontServiceException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+
 import org.jets3t.service.model.cloudfront.CacheBehavior;
 import org.jets3t.service.model.cloudfront.CacheBehavior.ViewerProtocolPolicy;
 import org.jets3t.service.model.cloudfront.Distribution;
@@ -27,12 +31,6 @@ import org.jets3t.service.model.cloudfront.DistributionConfig;
 import org.jets3t.service.model.cloudfront.LoggingStatus;
 import org.jets3t.service.model.cloudfront.S3Origin;
 import org.jets3t.service.security.AWSCredentials;
-
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
