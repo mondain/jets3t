@@ -115,7 +115,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
     protected volatile boolean shuttingDown;
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials the user credentials to use when communicating with S3, may be null in which case the
      *                    communication is done as an anonymous user.
@@ -125,7 +125,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
     }
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials                    the S3 user credentials to use when communicating with S3, may be null in which case the
      *                                       communication is done as an anonymous user.
@@ -142,7 +142,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
     }
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials                    the S3 user credentials to use when communicating with S3, may be null in which case the
      *                                       communication is done as an anonymous user.

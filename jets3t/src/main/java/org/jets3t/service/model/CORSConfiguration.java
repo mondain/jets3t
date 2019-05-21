@@ -21,11 +21,27 @@ public class CORSConfiguration {
 
     private List<CORSRule> rules = new ArrayList<>();
 
+    // default to AWS style
+    private Format format = Format.AWS;
+    
+    // XML formatting style
+    public enum Format {
+        AWS, GoogleStorage;
+    }
+
+    public enum AllowedMethod {
+        GET, HEAD, DELETE, POST, PUT;
+    }
+    
     public CORSConfiguration() {
     }
 
     public CORSConfiguration(List<CORSRule> rules) {
         this.rules = rules;
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
     }
 
     public List<CORSRule> getCORSRules() {
@@ -42,35 +58,78 @@ public class CORSConfiguration {
         return rule;
     }
 
-    public String toXml() throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
-        XMLBuilder builder = XMLBuilder.create("CORSConfiguration");
-        for (CORSRule rule : this.rules) {
-            XMLBuilder b = builder.elem("CORSRule");
-            if ((rule.id != null) && (rule.id.length() > 0)) {
-                b.elem("ID").t(rule.id);
-            }
-            b.elem("AllowedOrigin").t(rule.getAllowedOrigin());
-            for (AllowedMethod am : rule.getAllowedMethods()) {
-                b.elem("AllowedMethod").t(am.name());
-            }
-            for (String ah : rule.getAllowedHeaders()) {
-                b.elem("AllowedHeader").t(ah);
-            }
-            if (rule.getMaxAgeSeconds() != null) {
-                b.elem("MaxAgeSeconds").t(rule.getMaxAgeSeconds().toString());
-            }
-            for (String xh : rule.getExposeHeaders()) {
-                b.elem("ExposeHeader").t(xh);
-            }
-        }
-        return builder.asString();
+    public CORSRule newCORSRule(String allowedOrigin, Set<AllowedMethod> allowedMethods, Set<String> allowedHeaders) {
+        CORSRule rule = this.new CORSRule(allowedOrigin, allowedMethods, allowedHeaders);
+        this.rules.add(rule);
+        return rule;
     }
 
-    public static enum AllowedMethod {
-        GET, HEAD, DELETE, POST, PUT;
-
-        private AllowedMethod() {
+    public String toXml() throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+        XMLBuilder builder = null;
+        if (format == Format.AWS) {
+            builder = XMLBuilder.create("CORSConfiguration");
+            for (CORSRule rule : this.rules) {
+                XMLBuilder b = builder.elem("CORSRule");
+                if ((rule.id != null) && (rule.id.length() > 0)) {
+                    b.elem("ID").t(rule.id);
+                }
+                b.elem("AllowedOrigin").t(rule.getAllowedOrigin());
+                for (AllowedMethod am : rule.getAllowedMethods()) {
+                    b.elem("AllowedMethod").t(am.name());
+                }
+                for (String ah : rule.getAllowedHeaders()) {
+                    b.elem("AllowedHeader").t(ah);
+                }
+                if (rule.getMaxAgeSeconds() != null) {
+                    b.elem("MaxAgeSeconds").t(rule.getMaxAgeSeconds().toString());
+                }
+                for (String xh : rule.getExposeHeaders()) {
+                    b.elem("ExposeHeader").t(xh);
+                }
+            }
+        } else if (format == Format.GoogleStorage) {
+            /* https://cloud.google.com/storage/docs/configuring-cors
+            <?xml version="1.0" encoding="UTF-8"?>
+               <CorsConfig>
+                 <Cors>
+                   <Origins>
+                     <Origin>http://example.appspot.com</Origin>
+                   </Origins>
+                   <Methods>
+                     <Method>GET</Method>
+                     <Method>HEAD</Method>
+                     <Method>DELETE</Method>
+                   </Methods>
+                   <ResponseHeaders>
+                     <ResponseHeader>Content-Type</ResponseHeader>
+                   </ResponseHeaders>
+                   <MaxAgeSec>3600</MaxAgeSec>
+                 </Cors>
+               </CorsConfig>                 
+            */
+            builder = XMLBuilder.create("CorsConfig");
+            for (CORSRule rule : this.rules) {
+                XMLBuilder b = builder.elem("Cors");
+                XMLBuilder origins = b.elem("Origins");
+                origins.elem("Origin").t(rule.getAllowedOrigin());
+                if (rule.allowedHeaders != null) {
+                    XMLBuilder methods = b.elem("Methods");
+                    for (AllowedMethod am : rule.getAllowedMethods()) {
+                        methods.elem("Method").t(am.name());
+                    }
+                }
+                if (rule.allowedHeaders != null) {
+                    XMLBuilder respHeaders = b.elem("ResponseHeaders");
+                    for (String ah : rule.getAllowedHeaders()) {
+                        respHeaders.elem("ResponseHeader").t(ah);
+                    }
+                }
+                if (rule.getMaxAgeSeconds() != null) {
+                    b.elem("MaxAgeSec").t(rule.getMaxAgeSeconds().toString());
+                }
+            }
         }
+        return builder != null ? builder.asString() : null;
     }
 
     public class CORSRule {
@@ -83,7 +142,7 @@ public class CORSConfiguration {
 
         protected Set<String> allowedHeaders = Collections.emptySet();
 
-        protected Integer maxAgeSeconds;
+        protected Integer maxAgeSeconds = 3600;
 
         protected Set<String> exposeHeaders = Collections.emptySet();
 
@@ -94,6 +153,12 @@ public class CORSConfiguration {
         public CORSRule(String allowedOrigin, Set<CORSConfiguration.AllowedMethod> allowedMethods) {
             this.allowedOrigin = allowedOrigin;
             this.allowedMethods = allowedMethods;
+        }
+
+        public CORSRule(String allowedOrigin, Set<AllowedMethod> allowedMethods, Set<String> allowedHeaders) {
+            this.allowedOrigin = allowedOrigin;
+            this.allowedMethods = allowedMethods;
+            this.allowedHeaders = allowedHeaders;
         }
 
         public String getAllowedOrigin() {

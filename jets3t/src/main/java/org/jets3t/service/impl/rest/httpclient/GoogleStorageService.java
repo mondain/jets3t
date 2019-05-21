@@ -20,15 +20,19 @@ package org.jets3t.service.impl.rest.httpclient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.jets3t.service.Constants;
 import org.jets3t.service.Jets3tProperties;
+import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.gs.GSAccessControlList;
 import org.jets3t.service.impl.rest.XmlResponsesSaxParser;
+import org.jets3t.service.model.CORSConfiguration;
 import org.jets3t.service.model.GSBucket;
 import org.jets3t.service.model.GSBucketLoggingStatus;
 import org.jets3t.service.model.GSObject;
@@ -39,11 +43,14 @@ import org.jets3t.service.mx.MxDelegate;
 import org.jets3t.service.security.OAuth2Credentials;
 import org.jets3t.service.security.OAuth2Tokens;
 import org.jets3t.service.security.ProviderCredentials;
+import org.jets3t.service.utils.ServiceUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +74,7 @@ public class GoogleStorageService extends RestStorageService {
     private static final String GOOGLE_REST_METADATA_PREFIX = "x-goog-meta-";
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials
      * the user credentials to use when communicating with Google Storage, may be null in which case the
@@ -80,7 +87,7 @@ public class GoogleStorageService extends RestStorageService {
     }
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials
      * the user credentials to use when communicating with Google Storage, may be null in which case the
@@ -103,7 +110,7 @@ public class GoogleStorageService extends RestStorageService {
     }
 
     /**
-     * Constructs the service and initialises the properties.
+     * Constructs the service and initializes the properties.
      *
      * @param credentials
      * the user credentials to use when communicating with Google Storage, may be null in which case the
@@ -560,4 +567,49 @@ public class GoogleStorageService extends RestStorageService {
         // configuration (with no MainPageSuffix and NotFoundPage elements)
         this.setWebsiteConfigImpl(bucketName,  new GSWebsiteConfig());
     }
+
+    public CORSConfiguration getBucketCORSConfiguration(String bucketName) throws ServiceException {
+        Map<String, String> requestParameters = new HashMap<>();
+        requestParameters.put("cors", "");
+        int[] expectedStatusCodes = { 200, 404 };
+        HttpResponse getMethod = performRestGet(bucketName, null, requestParameters, null, expectedStatusCodes);
+        if (getMethod.getStatusLine().getStatusCode() == 404) {
+            return null;
+        } else {
+            return getXmlResponseSaxParser().parseCORSConfigurationResponse(new HttpMethodReleaseInputStream(getMethod));
+        }
+    }
+
+    public void setBucketCORSConfiguration(String bucketName, CORSConfiguration corsConfig) throws ServiceException {
+        Map<String, String> requestParameters = new HashMap<>();
+        requestParameters.put("cors", "");
+        String xml;
+        String xmlMd5Hash;
+        try {
+            xml = corsConfig.toXml();
+            xmlMd5Hash = ServiceUtils.toBase64(ServiceUtils.computeMD5Hash(xml.getBytes(Constants.DEFAULT_ENCODING)));
+        } catch (Exception e) {
+            throw new S3ServiceException("Unable to build CORSConfiguration XML document", e);
+        }
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("Content-MD5", xmlMd5Hash);
+        try {
+            performRestPut(bucketName, null, metadata, requestParameters, new StringEntity(xml, "text/plain", Constants.DEFAULT_ENCODING), true);
+        } catch (ServiceException se) {
+            throw new ServiceException(se);
+        } catch (UnsupportedEncodingException e) {
+            throw new ServiceException("Unable to encode XML document", e);
+        }
+    }
+
+    public void deleteBucketCORSConfiguration(String bucketName) throws ServiceException {
+        try {
+            Map<String, String> requestParameters = new HashMap<>();
+            requestParameters.put("cors", "");
+            performRestDelete(bucketName, null, requestParameters, null, null);
+        } catch (ServiceException se) {
+            throw new S3ServiceException(se);
+        }
+    }
+    
 }
