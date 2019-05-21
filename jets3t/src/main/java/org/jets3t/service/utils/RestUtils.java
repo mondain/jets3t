@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import javax.net.ssl.HostnameVerifier;
@@ -150,21 +149,13 @@ public class RestUtils {
      */
     public static String encodeUrlPath(String path, String delimiter) {
         final StringBuilder result = new StringBuilder();
-        final StringTokenizer t = new StringTokenizer(path, delimiter);
-        if(!t.hasMoreTokens()) {
-            return path;
-        }
-        if(path.startsWith(delimiter)) {
-            result.append(delimiter);
-        }
-        while(t.hasMoreTokens()) {
-            result.append(encodeUrlString(t.nextToken()));
-            if(t.hasMoreTokens()) {
+        // split takes a negative limit to not strip off empty matches at the end
+        final String tokens[] = path.split(delimiter, -1);
+        for (int i = 0; i < tokens.length; i++) {
+            result.append(encodeUrlString(tokens[i]));
+            if (i < tokens.length - 1) {
                 result.append(delimiter);
             }
-        }
-        if(path.endsWith(delimiter)) {
-            result.append(delimiter);
         }
         return result.toString();
     }
