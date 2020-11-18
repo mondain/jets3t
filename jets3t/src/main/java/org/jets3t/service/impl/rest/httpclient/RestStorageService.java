@@ -318,7 +318,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
                         "[" + ServiceUtils.join(expectedResponseCodes, ",") + "]");
                 log.debug("Headers: " + Arrays.asList(httpUriRequest.getAllHeaders()));
             }
-
+            
             // Track count of different response "error" types
             int internalErrorCount = 0;
             int requestTimeoutErrorCount = 0;
@@ -1873,19 +1873,29 @@ public abstract class RestStorageService extends StorageService implements JetS3
 
         if(object.getDataInputStream() != null) {
         	
-        	try
-        	{
-	        	InputStream is = object.getDataInputStream();
-	        	ByteArrayInputStream greetingIS = new ByteArrayInputStream(toByteArrayUsingJava(is));
-	        	object.setDataInputStream(greetingIS);
-	        	object.setContentLength(greetingIS.available());
+        	if (object.getContentLength() <= 0) {
+        		try
+	        	{
+		        	InputStream is = object.getDataInputStream(); 
+		        	ByteArrayInputStream greetingIS = new ByteArrayInputStream(toByteArrayUsingJava(is));
+		        	object.setDataInputStream(greetingIS);
+		        	object.setContentLength(greetingIS.available());
+	        	}
+	        	catch(IOException e)
+	        	{
+	        		log.warn("Error in setting content length", e);
+	        	}
         	}
-        	catch(IOException e)
-        	{
-        		log.warn("Error in setting content length", e);
+        	else {
+        		try {
+        			object.getDataInputStream().reset();
+        		}
+        		catch(IOException e)
+	        	{
+	        		log.warn("Could not reset the buffer", e);
+	        	}
         	}
-        	
-        	
+	     
             if(object.containsMetadata(StorageObject.METADATA_HEADER_CONTENT_LENGTH)) {
                 if(log.isDebugEnabled()) {
                     log.debug("Uploading object data with Content-Length: " + object.getContentLength());
