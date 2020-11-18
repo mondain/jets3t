@@ -88,7 +88,7 @@
         <jackson.version>2.9.7</jackson.version>
         <jaf.version>1.1.1</jaf.version>
         <javamail.version>1.6.2</javamail.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>[4.13.1,)</junit.version>
         <logback.version>1.2.3</logback.version>
         <mx4j.version>3.0.2</mx4j.version>
         <tomcat.version>8.5.32</tomcat.version> <!-- used for servlet-api -->
