@@ -23,7 +23,7 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <name>parent</name>
-    <version>0.9.6-SNAPSHOT</version>
+    <version>0.9.6</version>
     <url>https://github.com/mondain/jets3t</url>
     <description>JetS3t</description>
     <inceptionYear>2006</inceptionYear>
