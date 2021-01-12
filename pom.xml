@@ -23,7 +23,7 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <name>parent</name>
-    <version>0.9.6</version>
+    <version>0.9.7</version>
     <url>https://github.com/mondain/jets3t</url>
     <description>JetS3t</description>
     <inceptionYear>2006</inceptionYear>
@@ -82,17 +82,17 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.build.timestamp.format>MM.dd.yyyy HH:mm</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <bc.version>1.59</bc.version>
-        <commons-codec.version>1.11</commons-codec.version>
-        <httpclient.version>4.5.3</httpclient.version>
+        <bc.version>1.62</bc.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <httpclient.version>4.5.9</httpclient.version>
         <jackson.version>2.9.7</jackson.version>
         <jaf.version>1.1.1</jaf.version>
         <javamail.version>1.6.2</javamail.version>
         <junit.version>[4.13.1,)</junit.version>
         <logback.version>1.2.3</logback.version>
         <mx4j.version>3.0.2</mx4j.version>
-        <tomcat.version>8.5.32</tomcat.version> <!-- used for servlet-api -->
-        <slf4j.version>1.7.25</slf4j.version>
+        <tomcat.version>8.5.61</tomcat.version> <!-- used for servlet-api -->
+        <slf4j.version>1.7.30</slf4j.version>
         <xmlbuilder.version>1.1</xmlbuilder.version>
     </properties>
     <repositories>
@@ -164,16 +164,6 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jul-to-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>log4j-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
@@ -202,8 +192,31 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0-M2</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-maven</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>[1.8,)</version>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>[3.6.0,)</version>
+                                    </requireMavenVersion>
+                                </rules>    
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>            	
+                <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <version>3.8.1</version>
                     <configuration>
                         <fork>true</fork>
                         <source>${maven.compiler.source}</source>
@@ -251,6 +264,10 @@
                             </tag>
                         </tags>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

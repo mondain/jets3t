@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jets3t</groupId>
         <artifactId>parent</artifactId>
-        <version>0.9.6-SNAPSHOT</version>
+        <version>0.9.7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jets3t-gui</artifactId>
@@ -22,7 +22,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -48,7 +47,11 @@
             <groupId>org.jets3t</groupId>
             <artifactId>jets3t</artifactId>
             <version>${parent.version}</version>
-        </dependency> 
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
