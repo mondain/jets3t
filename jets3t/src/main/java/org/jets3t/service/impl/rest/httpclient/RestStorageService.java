@@ -1856,7 +1856,17 @@ public abstract class RestStorageService extends StorageService implements JetS3
     }
     
     
-    public static byte[] toByteArrayUsingJava(InputStream is) throws IOException{ ByteArrayOutputStream baos = new ByteArrayOutputStream(); int reads = is.read(); while(reads != -1){ baos.write(reads); reads = is.read(); } return baos.toByteArray(); }
+    public static byte[] toByteArrayUsingJava(InputStream is) throws IOException{ 
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+    	
+        int nRead;
+        byte[] data = new byte[16384];
+        while ((nRead = is.read(data, 0, data.length)) != -1) {
+            baos.write(data, 0, nRead);
+        }
+        
+    	return baos.toByteArray(); 
+    }
     	
 
     /**
@@ -1870,7 +1880,7 @@ public abstract class RestStorageService extends StorageService implements JetS3
         }
 
         HttpEntity requestEntity = null;
-
+        
         if(object.getDataInputStream() != null) {
         	
         	if (object.getContentLength() <= 0) {
