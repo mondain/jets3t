@@ -23,7 +23,7 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <name>parent</name>
-    <version>0.9.7</version>
+    <version>0.9.8</version>
     <url>https://github.com/mondain/jets3t</url>
     <description>JetS3t</description>
     <inceptionYear>2006</inceptionYear>
@@ -82,10 +82,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.build.timestamp.format>MM.dd.yyyy HH:mm</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <bc.version>1.62</bc.version>
+        <bc.version>1.77</bc.version>
         <commons-codec.version>1.15</commons-codec.version>
-        <httpclient.version>4.5.9</httpclient.version>
-        <jackson.version>2.9.7</jackson.version>
+        <httpclient.version>4.5.14</httpclient.version>
+        <jackson.version>2.16.0</jackson.version>
         <jaf.version>1.1.1</jaf.version>
         <javamail.version>1.6.2</javamail.version>
         <junit.version>[4.13.1,)</junit.version>
@@ -93,7 +93,7 @@
         <mx4j.version>3.0.2</mx4j.version>
         <tomcat.version>8.5.61</tomcat.version> <!-- used for servlet-api -->
         <slf4j.version>1.7.30</slf4j.version>
-        <xmlbuilder.version>1.1</xmlbuilder.version>
+        <xmlbuilder.version>1.3</xmlbuilder.version>
     </properties>
     <repositories>
         <repository>
@@ -120,7 +120,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
+                <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bc.version}</version>
             </dependency>
             <dependency>
