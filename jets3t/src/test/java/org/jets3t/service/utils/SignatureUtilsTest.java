@@ -96,4 +96,14 @@ public class SignatureUtilsTest {
                         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
                 signature);
     }
+
+    @Test
+    public void testAwsV4EncodeURIWithSpecialHandlingCharacters() {
+        final String uri = "/ *@.pdf";
+        final String expectEncoded = "/%20%2A%40.pdf";
+        final String encoded = SignatureUtils.awsV4EncodeURI(uri, false);
+
+        assertEquals(expectEncoded, encoded);
+    }
+
 }

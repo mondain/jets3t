@@ -643,6 +643,10 @@ public class SignatureUtils {
                 result.append(ch);
             } else if (ch == '/') {
                 result.append(encodeSlash ? "%2F" : ch);
+            } else if (ch == '*') {
+                result.append("%2A");
+            } else if (ch == '@') {
+                result.append("%40");
             } else {
                 String hex = RestUtils.encodeUrlString(String.valueOf(ch));
                 result.append(hex);
